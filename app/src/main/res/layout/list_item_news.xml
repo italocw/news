@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="news"
+            type="com.example.news.models.News" />
+
+        <variable
+            name="clickListener"
+            type="com.example.news.NewsAdapter.NewsListener" />
+    </data>
+
+
+    <com.google.android.material.card.MaterialCardView
+              android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/half_margin"
+        android:onClick="@{()->clickListener.onClick(news)}">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Media -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/news_preview_image_height"
+                android:scaleType="centerCrop"
+                app:image="@{news}" />
+            <!--  android:contentDescription="@string/content_description_media"-->
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/margin">
+
+                <!-- Title, secondary and supporting text -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{news.title}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/half_margin"
+                    android:text="@{news.author}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@{news.sourceName}"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                    android:textColor="?android:attr/textColorSecondary" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>
