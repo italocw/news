@@ -89,7 +89,7 @@ class MainViewModel(
 
     fun refreshNews() {
         if (screenStatus.value != NewsListScreenStatus.LOADING) {
-            fetchOnlineDataIfHasInternetConnection()
+            fetchOnlineDataIfHasInternetConnection(_queryText.value!!)
         }
     }
 }
