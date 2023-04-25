@@ -1,12 +1,10 @@
 <resources>
     <string name="app_name">Notícias</string>
-    <string name="commented_by">"Comentado por"</string>
     <string name="menu_refresh">Atualizar</string>
-    <string name="last_ticket_comment">Última mensagem no chamado:</string>
     <string name="getting_news">Obtendo notícias…</string>
     <string name="last_news">Últimas notícias</string>
     <string name="empty_news_list_text">Nenhuma notícia foi encontrada</string>
     <string name="internet_connection_not_available">Não foi possível obter os dados. Por favor, verifique sua conexão com a internet</string>
-    <string name="tickets_were_updated">Lista de chamados foi atualizada</string>
     <string name="an_error_occurred_when_trying_to_get_data">Um erro ocorreu ao tentar carregar os dados</string>
+    <string name="search">Pesquisar</string>
 </resources>

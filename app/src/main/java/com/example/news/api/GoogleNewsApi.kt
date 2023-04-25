@@ -11,10 +11,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
 
-private const val TOP_HEADLINES_ENDPOINT = "top-headlines?sources=google-news-br&apiKey=".plus(
-    API_KEY
-)
 
 private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
@@ -27,8 +26,8 @@ private val retrofit = Retrofit.Builder()
 
 
 interface GoogleNewsApiService {
-    @GET(TOP_HEADLINES_ENDPOINT)
-    suspend fun getTopHeadlines(): String
+    @GET("everything?language=pt&apiKey=".plus(API_KEY))
+    suspend fun getEverythingNews(@Query("q") searchTerm:String ): String
 }
 
 object GoogleNewsApi {

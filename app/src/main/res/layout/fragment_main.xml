@@ -4,6 +4,10 @@
 
     <data>
         <variable
+            name="menuSearch"
+            type="android.widget.SearchView" />
+
+        <variable
             name="viewModel"
             type="com.example.news.layout.main.MainViewModel" />
     </data>
@@ -19,7 +23,7 @@
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/ticket_recycler"
+                android:id="@+id/news_recycler"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />

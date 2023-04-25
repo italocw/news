@@ -9,7 +9,7 @@ import com.example.news.databinding.ListItemNewsBinding
 import com.example.news.models.News
 
 class NewsAdapter(val clickListener: NewsListener) :
-    ListAdapter<News, NewsAdapter.ViewHolder>(TicketDiffCallback()) {
+    ListAdapter<News, NewsAdapter.ViewHolder>(NewsDiffCallback()) {
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -38,7 +38,7 @@ class NewsAdapter(val clickListener: NewsListener) :
         }
     }
 
-    class TicketDiffCallback : DiffUtil.ItemCallback<News>() {
+    class NewsDiffCallback : DiffUtil.ItemCallback<News>() {
         override fun areItemsTheSame(oldItem: News, newItem: News): Boolean {
             return oldItem.url == newItem.url
         }

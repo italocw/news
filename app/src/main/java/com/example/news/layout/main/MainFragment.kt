@@ -1,9 +1,15 @@
 package com.example.news.layout.main
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.TextView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -14,18 +20,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.news.databinding.FragmentMainBinding
-import com.example.news.R
 import com.example.news.NewsAdapter
+import com.example.news.R
+import com.example.news.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
 
     private lateinit var binding: FragmentMainBinding
-    private lateinit var ticketListAdapter: NewsAdapter
+    private lateinit var newsListAdapter: NewsAdapter
     private lateinit var viewModel: MainViewModel
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var ticketRecyclerView: RecyclerView
+    private lateinit var newsRecyclerView: RecyclerView
     private lateinit var loadingDataLayout: View
     private lateinit var informationMessageTextView: TextView
 
@@ -35,11 +41,11 @@ class MainFragment : Fragment() {
         binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
-        NewsAdapter(NewsAdapter.NewsListener { ticket ->
-            viewModel.onNewsClicked(ticket)
-        }).apply { ticketListAdapter = this }
+        NewsAdapter(NewsAdapter.NewsListener { news ->
+            viewModel.onNewsClicked(news)
+        }).apply { newsListAdapter = this }
 
-        binding.ticketRecycler.adapter = ticketListAdapter
+        binding.newsRecycler.adapter = newsListAdapter
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         binding.viewModel = viewModel
@@ -52,17 +58,18 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+
     private fun setViews(binding: FragmentMainBinding) {
         swipeRefreshLayout = binding.swipeRefresh
-        ticketRecyclerView = binding.ticketRecycler
+        newsRecyclerView = binding.newsRecycler
         loadingDataLayout = binding.statusLoadingWheel
         informationMessageTextView = binding.informationMessage
     }
 
     private fun setObservers() {
-        setTicketClickObserver()
+        setNewsClickObserver()
         setScreenStatusObserver()
-        setTicketListObserver()
+        setNewsListObserver()
     }
 
     private fun setScreenStatusObserver() {
@@ -74,11 +81,13 @@ class MainFragment : Fragment() {
     private fun setScreenByDisplayingStatus(screenStatus: NewsListScreenStatus) {
         when (screenStatus) {
             NewsListScreenStatus.SUCCESS -> {
-                setScreenAsUpdatedListWithTickets()
+                setScreenAsUpdatedListWithNews()
             }
+
             NewsListScreenStatus.CONNECTION_PROBLEM, NewsListScreenStatus.EMPTY_LIST, NewsListScreenStatus.ERROR -> {
-                setScreenAsNoTicketsAreBeingShown()
+                setScreenAsNoNewsAreBeingShown()
             }
+
             NewsListScreenStatus.LOADING -> setScreenAsLoadingData()
         }
     }
@@ -86,7 +95,7 @@ class MainFragment : Fragment() {
     private fun setScreenAsLoadingData() {
         informationMessageTextView.visibility = GONE
 
-        if (listWithTicketsIsShown()) {
+        if (listWithNewsIsShown()) {
             swipeRefreshLayout.isRefreshing = true
 
         } else {
@@ -95,40 +104,40 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun listWithTicketsIsShown() =
+    private fun listWithNewsIsShown() =
         !viewModel.news.value.isNullOrEmpty()
 
-    private fun setScreenAsUpdatedListWithTickets() {
+    private fun setScreenAsUpdatedListWithNews() {
         swipeRefreshLayout.isRefreshing = false
         swipeRefreshLayout.isEnabled = true
-        ticketRecyclerView.visibility = VISIBLE
+        newsRecyclerView.visibility = VISIBLE
         loadingDataLayout.visibility = GONE
 
         informationMessageTextView.visibility = GONE
     }
 
-    private fun setScreenAsNoTicketsAreBeingShown() {
+    private fun setScreenAsNoNewsAreBeingShown() {
         loadingDataLayout.visibility = GONE
         swipeRefreshLayout.isRefreshing = false
-        ticketRecyclerView.visibility = GONE
+        newsRecyclerView.visibility = GONE
         informationMessageTextView.visibility = VISIBLE
         swipeRefreshLayout.isEnabled = true
     }
 
-    private fun setTicketClickObserver() {
+    private fun setNewsClickObserver() {
         viewModel.navigateToNews.observe(viewLifecycleOwner, Observer { news ->
 
             news?.let {
                 this.findNavController()
-                    .navigate(MainFragmentDirections.actionShowDetail(news, news.url))
+                    .navigate(MainFragmentDirections.actionShowDetail(news, news.sourceName))
                 viewModel.onNewsNavigated()
             }
         })
     }
 
-    private fun setTicketListObserver() {
+    private fun setNewsListObserver() {
         viewModel.news.observe(viewLifecycleOwner) { newsList ->
-            ticketListAdapter.submitList(newsList)
+            newsListAdapter.submitList(newsList)
         }
     }
 
@@ -138,16 +147,46 @@ class MainFragment : Fragment() {
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.main_news_list_menu, menu)
+                val searchView = menu.findItem(R.id.menu_search).actionView as SearchView
+                setSearchViewListeners(searchView)
+
             }
 
+
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                refresh()
+                if (menuItem.itemId == R.id.menu_refresh) {
+                    refresh()
+                } else {
+                    val searchView = menuItem.actionView as SearchView
+
+                    searchView.isIconified = false
+                    searchView.queryHint = getString(R.string.search)
+
+                }
                 return true
             }
+
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
+    private fun setSearchViewListeners(searchView: SearchView) {
+        val queryTextListener: SearchView.OnQueryTextListener =
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextChange(newText: String): Boolean {
+                    viewModel.queryText.value = newText
+                    return true
+                }
+
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    viewModel.onNewsTextQuerySubmit()
+                    return true
+                }
+            }
+        searchView.setOnQueryTextListener(queryTextListener)
     }
 
     fun refresh() {
         this.viewModel.refreshNews()
     }
+
 }

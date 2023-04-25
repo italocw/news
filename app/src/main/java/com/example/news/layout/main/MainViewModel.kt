@@ -38,18 +38,24 @@ class MainViewModel(
     val screenStatus
         get() = _screenStatus
 
+
+    private val _queryText = MutableLiveData<String>()
+    val queryText
+        get() = _queryText
+
+
     init {
         fetchOnlineDataIfHasInternetConnection()
     }
 
-    private fun fetchOnlineDataIfHasInternetConnection() {
+    private fun fetchOnlineDataIfHasInternetConnection(searchTerm:String = "Brasil") {
         viewModelScope.launch {
             _screenStatus.value = NewsListScreenStatus.LOADING
 
             try {
                 if (isInternetAvailable()) {
 
-                    repository.fetchNews()
+                    repository.fetchNews(searchTerm)
 
                     if (news.value!!.isEmpty()) {
                         _screenStatus.value = NewsListScreenStatus.EMPTY_LIST
@@ -70,6 +76,12 @@ class MainViewModel(
     fun onNewsClicked(news: News) {
         _navigateToNews.value = news
     }
+
+
+    fun onNewsTextQuerySubmit() {
+        fetchOnlineDataIfHasInternetConnection(_queryText.value!!)
+    }
+
 
     fun onNewsNavigated() {
         _navigateToNews.value = null

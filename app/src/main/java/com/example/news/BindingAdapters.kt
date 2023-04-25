@@ -8,7 +8,6 @@ import com.example.news.layout.main.NewsListScreenStatus
 import com.example.news.models.News
 import com.example.news.repository.FetchingState
 
-
 @BindingAdapter("image")
 fun ImageView.setImage(news: News?) {
     news?.let {
@@ -18,6 +17,12 @@ fun ImageView.setImage(news: News?) {
     }
 }
 
+@BindingAdapter("content")
+fun TextView.setContent(news: News?) {
+    news?.let {
+        text = news.content
+    }
+}
 
 @BindingAdapter("dataFetchingStatus")
 fun TextView.setFetchingState(dataFetchingStatus: FetchingState?) {
