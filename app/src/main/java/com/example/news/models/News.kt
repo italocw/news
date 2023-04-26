@@ -18,7 +18,7 @@ data class News(
 ) : Parcelable {
     fun hasCompleteInformation(): Boolean {
         fun hasNonValidParameter(vararg content: String) :Boolean{
-         return   content.any { return it == "null" }
+         return  content.any{ it == "null"}
         }
 
         return !hasNonValidParameter(title, description, sourceName, author, content)
