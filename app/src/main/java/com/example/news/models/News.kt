@@ -16,11 +16,6 @@ data class News(
     val publishedAt: LocalDateTime,
     val content: String
 ) : Parcelable {
-    fun hasCompleteInformation(): Boolean {
-        fun hasNonValidParameter(vararg content: String) :Boolean{
-         return  content.any{ it == "null"}
-        }
+    fun hasCompleteInformation() = "null" !in listOf(title, description, sourceName, author, content)
 
-        return !hasNonValidParameter(title, description, sourceName, author, content)
-    }
 }
