@@ -11,7 +11,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -27,7 +26,7 @@ private val retrofit = Retrofit.Builder()
 
 interface GoogleNewsApiService {
     @GET("everything?language=pt&apiKey=".plus(API_KEY))
-    suspend fun getEverythingNews(@Query("q") searchTerm:String ): String
+    suspend fun getEverythingNews(@Query("q") queryText:String ): String
 }
 
 object GoogleNewsApi {

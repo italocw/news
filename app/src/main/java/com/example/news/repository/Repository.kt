@@ -24,10 +24,10 @@ class Repository {
         dataFetchingState.value = FetchingState.IDLE
     }
 
-    suspend fun fetchNews(searchTerm:String) {
+    suspend fun fetchNews(queryText:String) {
         withContext(Dispatchers.IO) {
             try {
-                val updatedNews = fetchNewsFromGoogle(searchTerm)
+                val updatedNews = fetchNewsFromGoogle(queryText)
 
                 news.postValue(updatedNews)
                 dataFetchingState.postValue(FetchingState.IDLE)
@@ -40,10 +40,10 @@ class Repository {
         }
     }
 
-    private suspend fun fetchNewsFromGoogle(searchTerm:String ): ArrayList<News> {
+    private suspend fun fetchNewsFromGoogle(queryText:String ): ArrayList<News> {
         dataFetchingState.postValue(FetchingState.DOWNLOADING_NEWS)
 
-        val returnedNews = JSONObject(GoogleNewsApi.retrofitService.getEverythingNews(searchTerm))
+        val returnedNews = JSONObject(GoogleNewsApi.retrofitService.getEverythingNews(queryText))
 
         return parseNewsJsonResult(returnedNews) as ArrayList<News>
     }

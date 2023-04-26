@@ -25,7 +25,6 @@ import com.example.news.R
 import com.example.news.databinding.FragmentMainBinding
 
 class MainFragment : Fragment() {
-
     private lateinit var binding: FragmentMainBinding
     private lateinit var newsListAdapter: NewsAdapter
     private lateinit var viewModel: MainViewModel
@@ -37,7 +36,7 @@ class MainFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
@@ -60,10 +59,12 @@ class MainFragment : Fragment() {
 
 
     private fun setViews(binding: FragmentMainBinding) {
-        swipeRefreshLayout = binding.swipeRefresh
-        newsRecyclerView = binding.newsRecycler
-        loadingDataLayout = binding.statusLoadingWheel
-        informationMessageTextView = binding.informationMessage
+        binding.run {
+            swipeRefreshLayout = swipeRefresh
+            newsRecyclerView = newsRecycler
+            loadingDataLayout = statusLoadingWheel
+            informationMessageTextView = informationMessage
+        }
     }
 
     private fun setObservers() {
@@ -125,14 +126,14 @@ class MainFragment : Fragment() {
     }
 
     private fun setNewsClickObserver() {
-        viewModel.navigateToNews.observe(viewLifecycleOwner, Observer { news ->
+        viewModel.navigateToNews.observe(viewLifecycleOwner) { news ->
 
             news?.let {
                 this.findNavController()
                     .navigate(MainFragmentDirections.actionShowDetail(news, news.sourceName))
                 viewModel.onNewsNavigated()
             }
-        })
+        }
     }
 
     private fun setNewsListObserver() {
@@ -149,9 +150,7 @@ class MainFragment : Fragment() {
                 menuInflater.inflate(R.menu.main_news_list_menu, menu)
                 val searchView = menu.findItem(R.id.menu_search).actionView as SearchView
                 setSearchViewListeners(searchView)
-
             }
-
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 if (menuItem.itemId == R.id.menu_refresh) {
@@ -160,8 +159,7 @@ class MainFragment : Fragment() {
                     val searchView = menuItem.actionView as SearchView
 
                     searchView.isIconified = false
-                    searchView.queryHint = getString(R.string.search)
-
+                    searchView.queryHint = viewModel.queryText.value ?: getString(R.string.search)
                 }
                 return true
             }
@@ -182,11 +180,11 @@ class MainFragment : Fragment() {
                     return true
                 }
             }
+
         searchView.setOnQueryTextListener(queryTextListener)
     }
 
     fun refresh() {
         this.viewModel.refreshNews()
     }
-
 }

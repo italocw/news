@@ -11,7 +11,16 @@ data class News(
     val url: String,
     val urlToImage: String,
     val description: String,
-    val sourceName:String,
+    val sourceName: String,
     val author: String,
     val publishedAt: LocalDateTime,
-    val content: String) : Parcelable
+    val content: String
+) : Parcelable {
+    fun hasCompleteInformation(): Boolean {
+        fun hasNonValidParameter(vararg content: String) :Boolean{
+         return   content.any { return it == "null" }
+        }
+
+        return !hasNonValidParameter(title, description, sourceName, author, content)
+    }
+}

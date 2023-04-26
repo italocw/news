@@ -14,10 +14,11 @@ import kotlinx.coroutines.launch
 enum class NewsListScreenStatus {
     LOADING, SUCCESS, CONNECTION_PROBLEM, EMPTY_LIST, ERROR
 }
-
+const val  DEFAULT_QUERY_TEXT = "Brasil"
 class MainViewModel(
     application: Application
 ) : AndroidViewModel(application) {
+
     private val repository = Repository()
 
     private val _navigateToNews = MutableLiveData<News?>()
@@ -48,14 +49,13 @@ class MainViewModel(
         fetchOnlineDataIfHasInternetConnection()
     }
 
-    private fun fetchOnlineDataIfHasInternetConnection(searchTerm:String = "Brasil") {
+    private fun fetchOnlineDataIfHasInternetConnection(queryText:String?=DEFAULT_QUERY_TEXT) {
         viewModelScope.launch {
             _screenStatus.value = NewsListScreenStatus.LOADING
 
             try {
                 if (isInternetAvailable()) {
-
-                    repository.fetchNews(searchTerm)
+                    repository.fetchNews(queryText?:DEFAULT_QUERY_TEXT)
 
                     if (news.value!!.isEmpty()) {
                         _screenStatus.value = NewsListScreenStatus.EMPTY_LIST
@@ -79,7 +79,7 @@ class MainViewModel(
 
 
     fun onNewsTextQuerySubmit() {
-        fetchOnlineDataIfHasInternetConnection(_queryText.value!!)
+        fetchOnlineDataIfHasInternetConnection(_queryText.value)
     }
 
 
@@ -89,7 +89,7 @@ class MainViewModel(
 
     fun refreshNews() {
         if (screenStatus.value != NewsListScreenStatus.LOADING) {
-            fetchOnlineDataIfHasInternetConnection(_queryText.value!!)
+            fetchOnlineDataIfHasInternetConnection(_queryText.value)
         }
     }
 }
