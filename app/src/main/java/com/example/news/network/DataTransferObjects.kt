@@ -61,3 +61,16 @@ fun NetworkNewsContainer.asDatabaseModel(): List<DatabaseNews> {
         )
     }
 }
+
+fun News.asDatabaseModel(): DatabaseNews {
+    return DatabaseNews(
+        title!!,
+        url,
+        urlToImage!!,
+        description!!,
+        sourceName,
+        author!!,
+        publishedAt.toString(),
+        content!!
+    )
+}

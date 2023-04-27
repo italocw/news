@@ -7,6 +7,7 @@ import com.example.news.database.NewsDatabase
 import com.example.news.database.asDomainModel
 import com.example.news.domain.News
 import com.example.news.network.NewsNetwork
+import com.example.news.network.asDatabaseModel
 import com.example.news.network.asDomainModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -29,9 +30,9 @@ class NewsRepository(private val database: NewsDatabase) {
         dataFetchingState.value = FetchingState.IDLE
     }
 
-    suspend fun refreshNews(searchQuery: String = "Brasil") {
+    suspend fun saveNews(news: News) {
         withContext(Dispatchers.IO) {
-            val newList = NewsNetwork.newsService.getEverythingNews(searchQuery)
+            val newList = database.newsDao.insert(news.asDatabaseModel())
             //   database.newsDao.insertAll(newList.asDatabaseModel())
         }
     }

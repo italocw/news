@@ -3,6 +3,7 @@ package com.example.news.database
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.example.news.domain.News
 
 @Dao
 interface NewsDao {
@@ -11,6 +12,9 @@ interface NewsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll( news: List<DatabaseNews>)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insert(news: DatabaseNews)
 }
 
 @Database(entities = [DatabaseNews::class], version = 1)
