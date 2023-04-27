@@ -21,11 +21,6 @@ class NewsAdapter(val clickListener: NewsListener) :
         return ViewHolder.from(parent)
     }
 
-    fun submitNewsWithCompleteInformation(newsList: List<News>?) {
-       val newsWithCompleteInformation = newsList!!.filter {it.hasCompleteInformation()  }
-        submitList(newsWithCompleteInformation)
-    }
-
     class ViewHolder private constructor(val binding: ListItemNewsBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(news: News, clickListener: NewsListener) {

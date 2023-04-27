@@ -20,7 +20,7 @@ enum class FetchingState {
 
 class NewsRepository(private val database: NewsDatabase) {
 
-    val savedNews: MutableLiveData<List<News>> = database.newsDao.getNews().map() {
+    val news: MutableLiveData<List<News>> = database.newsDao.getNews().map() {
         it.asDomainModel()
     } as MutableLiveData<List<News>>
 
@@ -41,9 +41,10 @@ class NewsRepository(private val database: NewsDatabase) {
     suspend fun fetchNewsFromWeb(queryText: String) {
         withContext(Dispatchers.IO) {
             try {
-                val updatedNews = fetchNewsFromGoogleService(queryText)
+                val newsFromWeb = fetchNewsFromGoogleService(queryText)
+                val newsWithCompleteInformation = newsFromWeb.filter {it.hasCompleteInformation()  }
 
-                savedNews.postValue(updatedNews)
+                news.postValue(newsWithCompleteInformation)
                 dataFetchingState.postValue(FetchingState.IDLE)
             } catch (exception: Exception) {
                 Timber.log(Log.ERROR, exception.message)
@@ -56,18 +57,10 @@ class NewsRepository(private val database: NewsDatabase) {
 
     private suspend fun fetchNewsFromGoogleService(queryText: String): ArrayList<News> {
         dataFetchingState.postValue(FetchingState.DOWNLOADING_NEWS)
-
         val returnedNewsNetworkContainer = NewsNetwork.newsService.getEverythingNews(queryText).body()
 
 
          return returnedNewsNetworkContainer!!.asDomainModel() as ArrayList<News>
     }
 
-
-    private fun getFormattedCurrentDateTime(): String {
-        val isDatePattern = "yyyy-MM-dd"
-        val format = SimpleDateFormat(isDatePattern)
-
-        return format.format(Calendar.getInstance().time)
-    }
 }

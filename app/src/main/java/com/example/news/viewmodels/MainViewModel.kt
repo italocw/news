@@ -29,7 +29,7 @@ class MainViewModel(
         get() = _navigateToNews
 
     private val _news: LiveData<List<News>> =
-        newsRepository.savedNews
+        newsRepository.news
     val news
         get() = _news
 

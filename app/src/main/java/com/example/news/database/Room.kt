@@ -21,19 +21,19 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao
-interface newsDao {
+interface NewsDao {
     @Query("select * from databasenews")
     fun getNews(): LiveData<List<DatabaseNews>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll( newss: List<DatabaseNews>)
+    fun insertAll( news: List<DatabaseNews>)
 }
 
 
 
 @Database(entities = [DatabaseNews::class], version = 1)
 abstract class NewsDatabase: RoomDatabase() {
-    abstract val newsDao: newsDao
+    abstract val newsDao: NewsDao
 }
 
 private lateinit var INSTANCE: NewsDatabase
