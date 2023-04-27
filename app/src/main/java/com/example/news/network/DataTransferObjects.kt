@@ -21,14 +21,12 @@ data class NetworkNews(
     val author: String,
     val publishedAt: String,
     val content: String
-
 )
 
 data class Source(
     val id: String,
     val name: String
 )
-
 
 fun NetworkNewsContainer.asDomainModel(): List<News> {
 

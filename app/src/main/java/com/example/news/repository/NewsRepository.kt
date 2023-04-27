@@ -11,8 +11,6 @@ import com.example.news.network.asDomainModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Calendar
 
 enum class FetchingState {
     IDLE, DOWNLOADING_NEWS
@@ -30,10 +28,11 @@ class NewsRepository(private val database: NewsDatabase) {
     init {
         dataFetchingState.value = FetchingState.IDLE
     }
+
     suspend fun refreshNews(searchQuery: String = "Brasil") {
         withContext(Dispatchers.IO) {
             val newList = NewsNetwork.newsService.getEverythingNews(searchQuery)
-           //   database.newsDao.insertAll(newList.asDatabaseModel())
+            //   database.newsDao.insertAll(newList.asDatabaseModel())
         }
     }
 
@@ -42,7 +41,7 @@ class NewsRepository(private val database: NewsDatabase) {
         withContext(Dispatchers.IO) {
             try {
                 val newsFromWeb = fetchNewsFromGoogleService(queryText)
-                val newsWithCompleteInformation = newsFromWeb.filter {it.hasCompleteInformation()  }
+                val newsWithCompleteInformation = newsFromWeb.filter { it.hasCompleteInformation() }
 
                 news.postValue(newsWithCompleteInformation)
                 dataFetchingState.postValue(FetchingState.IDLE)
@@ -57,10 +56,11 @@ class NewsRepository(private val database: NewsDatabase) {
 
     private suspend fun fetchNewsFromGoogleService(queryText: String): ArrayList<News> {
         dataFetchingState.postValue(FetchingState.DOWNLOADING_NEWS)
-        val returnedNewsNetworkContainer = NewsNetwork.newsService.getEverythingNews(queryText).body()
+
+        val returnedNewsNetworkContainer =
+            NewsNetwork.newsService.getEverythingNews(queryText).body()
 
 
-         return returnedNewsNetworkContainer!!.asDomainModel() as ArrayList<News>
+        return returnedNewsNetworkContainer!!.asDomainModel() as ArrayList<News>
     }
-
 }

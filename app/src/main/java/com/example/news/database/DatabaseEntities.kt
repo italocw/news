@@ -6,15 +6,6 @@ import com.example.news.domain.News
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-/**
- * Database entities go in this file. These are responsible for reading and writing from the
- * database.
- */
-
-
-/**
- * DatabaseVideo represents a video entity in the database.
- */
 @Entity
 data class DatabaseNews constructor(
     @PrimaryKey
@@ -28,10 +19,6 @@ data class DatabaseNews constructor(
     val content: String
 )
 
-
-/**
- * Map DatabaseVideos to domain entities
- */
 fun List<DatabaseNews>.asDomainModel(): List<News> {
     return map {
         News(

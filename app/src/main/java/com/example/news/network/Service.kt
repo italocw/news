@@ -28,13 +28,10 @@ object NewsNetwork {
 
     private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
-    val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
+    val gson = GsonBuilder().create()
     private val retrofit = Retrofit.Builder()
-        .addConverterFactory(ScalarsConverterFactory.create())
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addConverterFactory(MoshiConverterFactory.create(moshi)).baseUrl(Constants.BASE_API_URL).build()
-
-
 
     val newsService: GoogleNewsApiService by lazy { retrofit.create(GoogleNewsApiService::class.java) }
 }
