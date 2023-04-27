@@ -136,7 +136,7 @@ class NewsListFragment : Fragment() {
 
     private fun setNewsListObserver() {
         viewModel.news.observe(viewLifecycleOwner) { newsList ->
-            newsListAdapter.submitNewsWithCompleteInformation(newsList)
+            newsListAdapter.submitList(newsList)
         }
     }
 
