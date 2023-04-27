@@ -1,36 +1,39 @@
-package com.example.news.layout.main
+package com.example.news.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.news.api.isInternetAvailable
-import com.example.news.models.News
+import com.example.news.database.getDatabase
+import com.example.news.domain.News
+import com.example.news.network.isInternetAvailable
 import com.example.news.repository.FetchingState
-import com.example.news.repository.Repository
+import com.example.news.repository.NewsRepository
 import kotlinx.coroutines.launch
 
 enum class NewsListScreenStatus {
     LOADING, SUCCESS, CONNECTION_PROBLEM, EMPTY_LIST, ERROR
 }
-const val  DEFAULT_QUERY_TEXT = "Brasil"
+
+const val DEFAULT_QUERY_TEXT = "Brasil"
+
 class MainViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val repository = Repository()
+    private val newsRepository = NewsRepository(getDatabase(application))
 
     private val _navigateToNews = MutableLiveData<News?>()
     val navigateToNews
         get() = _navigateToNews
 
     private val _news: LiveData<List<News>> =
-        repository.news
+        newsRepository.savedNews
     val news
         get() = _news
 
-    private val _dataFetchingState: LiveData<FetchingState> = repository.dataFetchingState
+    private val _dataFetchingState: LiveData<FetchingState> = newsRepository.dataFetchingState
     val dataFetchingState
         get() = _dataFetchingState
 
@@ -49,13 +52,13 @@ class MainViewModel(
         fetchOnlineDataIfHasInternetConnection()
     }
 
-    private fun fetchOnlineDataIfHasInternetConnection(queryText:String?=DEFAULT_QUERY_TEXT) {
+    private fun fetchOnlineDataIfHasInternetConnection(queryText: String? = DEFAULT_QUERY_TEXT) {
         viewModelScope.launch {
             _screenStatus.value = NewsListScreenStatus.LOADING
 
             try {
                 if (isInternetAvailable()) {
-                    repository.fetchNews(queryText?:DEFAULT_QUERY_TEXT)
+                    newsRepository.fetchNewsFromWeb(queryText ?: DEFAULT_QUERY_TEXT)
 
                     if (news.value!!.isEmpty()) {
                         _screenStatus.value = NewsListScreenStatus.EMPTY_LIST

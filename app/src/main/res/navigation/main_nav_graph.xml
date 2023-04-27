@@ -2,26 +2,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@id/newsListFragment">
 
     <fragment
-        android:id="@+id/mainFragment"
-        android:name="com.example.news.layout.main.MainFragment"
+        android:id="@+id/newsListFragment"
+        android:name="com.example.news.ui.news.NewsListFragment"
 
         android:label="@string/last_news"
-        tools:layout="@layout/fragment_main">
+        tools:layout="@layout/fragment_news_list">
         <action
             android:id="@+id/action_show_detail"
-            app:destination="@id/detailFragment" />
+            app:destination="@id/newsDetailFragment" />
     </fragment>
     <fragment
-        android:id="@+id/detailFragment"
-        android:name="com.example.news.layout.DetailFragment"
+        android:id="@+id/newsDetailFragment"
+        android:name="com.example.news.ui.NewsDetailFragment"
         android:label="{newsTitle}">
 
         <argument
             android:name="selectedNews"
-            app:argType="com.example.news.models.News" />
+            app:argType="com.example.news.domain.News" />
 
         <argument
             android:name="newsTitle"

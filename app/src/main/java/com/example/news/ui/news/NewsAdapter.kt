@@ -1,4 +1,4 @@
-package com.example.news
+package com.example.news.ui.news
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.news.databinding.ListItemNewsBinding
-import com.example.news.models.News
+import com.example.news.domain.News
 
 class NewsAdapter(val clickListener: NewsListener) :
     ListAdapter<News, NewsAdapter.ViewHolder>(NewsDiffCallback()) {
@@ -19,6 +19,11 @@ class NewsAdapter(val clickListener: NewsListener) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder.from(parent)
+    }
+
+    fun submitNewsWithCompleteInformation(newsList: List<News>?) {
+       val newsWithCompleteInformation = newsList!!.filter {it.hasCompleteInformation()  }
+        submitList(newsWithCompleteInformation)
     }
 
     class ViewHolder private constructor(val binding: ListItemNewsBinding) :

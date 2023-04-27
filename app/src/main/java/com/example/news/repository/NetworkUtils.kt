@@ -1,25 +1,24 @@
-package com.example.news.api
+package com.example.news.network
 
-import com.example.news.models.News
+import com.example.news.domain.News
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.InetAddress
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 fun parseNewsJsonResult(jsonResult: JSONObject): List<News> {
     val newsArticlesJSONArray = jsonResult.getJSONArray("articles")
 
-    val parsedNews = ArrayList<News>()
+    val networkNews = ArrayList<NetworkNews>()
     var newsJSONObject: JSONObject
 
-    var news: News
+
     for (index in 0 until newsArticlesJSONArray.length()) {
         newsJSONObject = newsArticlesJSONArray.getJSONObject(index)
 
+
         newsJSONObject.run {
-            val title = getString("title")
+           /* val title = getString("title")
             val url = getString("url")
             val urlToImage = getString("urlToImage")
             val description = getString("description")
@@ -31,18 +30,21 @@ fun parseNewsJsonResult(jsonResult: JSONObject): List<News> {
                 DateTimeFormatter.ISO_OFFSET_DATE_TIME
             )
             val content = getString("content")
+*/
 
-            news =    News(title, url, urlToImage, description, sourceName, author, publishedAt, content)
 
         }
 
-        if (news.hasCompleteInformation()) {
-            parsedNews.add(news)
-        }
+     val    currentNetworkNews =   NewsNetwork.gson.fromJson<NetworkNews>(newsJSONObject.toString(),NetworkNews::class.java)
+       // NetworkNewsContainer(networkNews)
+
+
+        networkNews.add(currentNetworkNews)
 
     }
 
-    return parsedNews
+
+    return NetworkNewsContainer(networkNews).asDomainModel()
 }
 
 

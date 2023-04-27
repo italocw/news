@@ -6,11 +6,11 @@
 
         <variable
             name="news"
-            type="com.example.news.models.News" />
+            type="com.example.news.domain.News" />
 
         <variable
             name="clickListener"
-            type="com.example.news.NewsAdapter.NewsListener" />
+            type="com.example.news.ui.news.NewsAdapter.NewsListener" />
     </data>
 
 

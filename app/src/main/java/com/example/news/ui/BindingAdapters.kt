@@ -1,11 +1,12 @@
-package com.example.news
+package com.example.news.ui
 
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.example.news.layout.main.NewsListScreenStatus
-import com.example.news.models.News
+import com.example.news.R
+import com.example.news.viewmodels.NewsListScreenStatus
+import com.example.news.domain.News
 import com.example.news.repository.FetchingState
 
 @BindingAdapter("image")

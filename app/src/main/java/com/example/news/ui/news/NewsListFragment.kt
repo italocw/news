@@ -1,4 +1,4 @@
-package com.example.news.layout.main
+package com.example.news.ui.news
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,12 +20,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.news.NewsAdapter
 import com.example.news.R
-import com.example.news.databinding.FragmentMainBinding
+import com.example.news.databinding.FragmentNewsListBinding
+import com.example.news.viewmodels.MainViewModel
+import com.example.news.viewmodels.NewsListScreenStatus
 
-class MainFragment : Fragment() {
-    private lateinit var binding: FragmentMainBinding
+class NewsListFragment : Fragment() {
+    private lateinit var binding: FragmentNewsListBinding
     private lateinit var newsListAdapter: NewsAdapter
     private lateinit var viewModel: MainViewModel
 
@@ -37,7 +38,7 @@ class MainFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainBinding.inflate(inflater)
+        binding = FragmentNewsListBinding.inflate(inflater)
         binding.lifecycleOwner = this
 
         NewsAdapter(NewsAdapter.NewsListener { news ->
@@ -58,12 +59,12 @@ class MainFragment : Fragment() {
     }
 
 
-    private fun setViews(binding: FragmentMainBinding) {
-        binding.run {
-            swipeRefreshLayout = swipeRefresh
-            newsRecyclerView = newsRecycler
-            loadingDataLayout = statusLoadingWheel
-            informationMessageTextView = informationMessage
+    private fun setViews(binding: FragmentNewsListBinding) {
+        binding.let {
+            swipeRefreshLayout = it.swipeRefresh
+            newsRecyclerView = it.newsRecycler
+            loadingDataLayout = it.statusLoadingWheel
+            informationMessageTextView = it.informationMessage
         }
     }
 
@@ -74,20 +75,18 @@ class MainFragment : Fragment() {
     }
 
     private fun setScreenStatusObserver() {
-        viewModel.screenStatus.observe(viewLifecycleOwner, Observer { screenStatus ->
+        viewModel.screenStatus.observe(viewLifecycleOwner) { screenStatus ->
             setScreenByDisplayingStatus(screenStatus)
-        })
+        }
     }
 
     private fun setScreenByDisplayingStatus(screenStatus: NewsListScreenStatus) {
-        when (screenStatus) {
-            NewsListScreenStatus.SUCCESS -> {
-                setScreenAsUpdatedListWithNews()
-            }
 
-            NewsListScreenStatus.CONNECTION_PROBLEM, NewsListScreenStatus.EMPTY_LIST, NewsListScreenStatus.ERROR -> {
+        when (screenStatus) {
+            NewsListScreenStatus.SUCCESS -> setScreenAsUpdatedListWithNews()
+
+            NewsListScreenStatus.CONNECTION_PROBLEM, NewsListScreenStatus.EMPTY_LIST, NewsListScreenStatus.ERROR ->
                 setScreenAsNoNewsAreBeingShown()
-            }
 
             NewsListScreenStatus.LOADING -> setScreenAsLoadingData()
         }
@@ -105,8 +104,7 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun listWithNewsIsShown() =
-        !viewModel.news.value.isNullOrEmpty()
+    private fun listWithNewsIsShown() = !viewModel.news.value.isNullOrEmpty()
 
     private fun setScreenAsUpdatedListWithNews() {
         swipeRefreshLayout.isRefreshing = false
@@ -130,7 +128,7 @@ class MainFragment : Fragment() {
 
             news?.let {
                 this.findNavController()
-                    .navigate(MainFragmentDirections.actionShowDetail(news, news.sourceName))
+                    .navigate(NewsListFragmentDirections.actionShowDetail(news, news.sourceName))
                 viewModel.onNewsNavigated()
             }
         }
@@ -138,7 +136,7 @@ class MainFragment : Fragment() {
 
     private fun setNewsListObserver() {
         viewModel.news.observe(viewLifecycleOwner) { newsList ->
-            newsListAdapter.submitList(newsList)
+            newsListAdapter.submitNewsWithCompleteInformation(newsList)
         }
     }
 

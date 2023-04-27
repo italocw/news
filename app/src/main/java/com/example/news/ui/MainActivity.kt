@@ -1,4 +1,4 @@
-package com.example.news.layout.main
+package com.example.news.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -6,7 +6,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.news.R
-import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
