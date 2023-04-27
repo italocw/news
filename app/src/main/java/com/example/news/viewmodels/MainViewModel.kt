@@ -58,7 +58,8 @@ class MainViewModel(
 
             try {
                 if (isInternetAvailable()) {
-                    newsRepository.fetchNewsFromWeb(queryText ?: DEFAULT_QUERY_TEXT)
+
+                    newsRepository.fetchNewsFromWeb(getTreatedTextQuery(queryText))
 
                     if (news.value!!.isEmpty()) {
                         _screenStatus.value = NewsListScreenStatus.EMPTY_LIST
@@ -76,10 +77,14 @@ class MainViewModel(
         }
     }
 
+    private fun getTreatedTextQuery(queryText: String?): String {
+        return if (queryText.isNullOrBlank()) DEFAULT_QUERY_TEXT
+        else queryText
+    }
+
     fun onNewsClicked(news: News) {
         _navigateToNews.value = news
     }
-
 
     fun onNewsTextQuerySubmit() {
         fetchOnlineDataIfHasInternetConnection(_queryText.value)
