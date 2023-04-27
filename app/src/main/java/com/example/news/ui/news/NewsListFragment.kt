@@ -157,7 +157,7 @@ class NewsListFragment : Fragment() {
                     val searchView = menuItem.actionView as SearchView
 
                     searchView.isIconified = false
-                    searchView.queryHint = viewModel.queryText.value ?: getString(R.string.search)
+                    searchView.queryHint =  getString(R.string.search)
                 }
                 return true
             }
