@@ -26,14 +26,14 @@ class NewsTest {
     @Test
     fun shouldNotHaveCompleteInformation() {
         val news = News(
-            "Motorista morre em acidente",
-            "null",
-            "null",
-            "null",
-            "null",
-            "null",
+            null,
+            "www.google.com",
+            null,
+            null,
+            "uol",
+            null,
             LocalDateTime.now(),
-            "null"
+            null
         )
 
         assertFalse(news.hasCompleteInformation())
