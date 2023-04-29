@@ -9,7 +9,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.news.viewmodels.MainViewModel" />
+            type="com.example.news.ui.news.NewsListViewModel" />
     </data>
 
     <FrameLayout

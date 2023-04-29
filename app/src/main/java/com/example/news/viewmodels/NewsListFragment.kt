@@ -1,4 +1,4 @@
-package com.example.news.ui.news
+package com.example.news.viewmodels
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,22 +14,22 @@ import android.widget.TextView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.news.R
 import com.example.news.databinding.FragmentNewsListBinding
-import com.example.news.viewmodels.MainViewModel
-import com.example.news.viewmodels.NewsListScreenStatus
+import com.example.news.ui.news.NewsAdapter
+import com.example.news.ui.news.NewsListScreenStatus
+import com.example.news.ui.news.NewsListViewModel
 
 class NewsListFragment : Fragment() {
+    private val newsListViewModel by viewModels<NewsListViewModel>()
+
     private lateinit var binding: FragmentNewsListBinding
     private lateinit var newsListAdapter: NewsAdapter
-    private lateinit var viewModel: MainViewModel
-
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var newsRecyclerView: RecyclerView
     private lateinit var loadingDataLayout: View
@@ -38,34 +38,25 @@ class NewsListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNewsListBinding.inflate(inflater)
-        binding.lifecycleOwner = this
-
-        NewsAdapter(NewsAdapter.NewsListener { news ->
-            viewModel.onNewsClicked(news)
-        }).apply { newsListAdapter = this }
-
-        binding.newsRecycler.adapter = newsListAdapter
-
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        binding.viewModel = viewModel
-
-        setViews(binding)
-        setObservers()
-
-        swipeRefreshLayout.setOnRefreshListener { refresh() }
+        binding = FragmentNewsListBinding.inflate(inflater, container, false).apply {
+            viewModel = newsListViewModel
+        }
 
         return binding.root
     }
 
 
-    private fun setViews(binding: FragmentNewsListBinding) {
+    private fun setViews() {
+        setNewsList()
+        setMenu()
+
         binding.let {
             swipeRefreshLayout = it.swipeRefresh
             newsRecyclerView = it.newsRecycler
             loadingDataLayout = it.statusLoadingWheel
             informationMessageTextView = it.informationMessage
         }
+        swipeRefreshLayout.setOnRefreshListener { refresh() }
     }
 
     private fun setObservers() {
@@ -75,13 +66,12 @@ class NewsListFragment : Fragment() {
     }
 
     private fun setScreenStatusObserver() {
-        viewModel.screenStatus.observe(viewLifecycleOwner) { screenStatus ->
+        newsListViewModel.screenStatus.observe(viewLifecycleOwner) { screenStatus ->
             setScreenByDisplayingStatus(screenStatus)
         }
     }
 
     private fun setScreenByDisplayingStatus(screenStatus: NewsListScreenStatus) {
-
         when (screenStatus) {
             NewsListScreenStatus.SUCCESS -> setScreenAsUpdatedListWithNews()
 
@@ -104,7 +94,7 @@ class NewsListFragment : Fragment() {
         }
     }
 
-    private fun listWithNewsIsShown() = !viewModel.news.value.isNullOrEmpty()
+    private fun listWithNewsIsShown() = !newsListViewModel.news.value.isNullOrEmpty()
 
     private fun setScreenAsUpdatedListWithNews() {
         swipeRefreshLayout.isRefreshing = false
@@ -124,23 +114,30 @@ class NewsListFragment : Fragment() {
     }
 
     private fun setNewsClickObserver() {
-        viewModel.navigateToNews.observe(viewLifecycleOwner) { news ->
+        newsListViewModel.navigateToNews.observe(viewLifecycleOwner) { news ->
 
             news?.let {
                 this.findNavController()
                     .navigate(NewsListFragmentDirections.actionShowDetail(news, news.sourceName))
-                viewModel.onNewsNavigated()
+                newsListViewModel.onNewsNavigated()
             }
         }
     }
 
     private fun setNewsListObserver() {
-        viewModel.news.observe(viewLifecycleOwner) { newsList ->
+        newsListViewModel.news.observe(viewLifecycleOwner) { newsList ->
             newsListAdapter.submitList(newsList)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.lifecycleOwner = this.viewLifecycleOwner
+
+        setViews()
+        setObservers()
+    }
+
+    private fun setMenu() {
         val menuHost: MenuHost = requireActivity()
 
         menuHost.addMenuProvider(object : MenuProvider {
@@ -157,7 +154,7 @@ class NewsListFragment : Fragment() {
                     val searchView = menuItem.actionView as SearchView
 
                     searchView.isIconified = false
-                    searchView.queryHint =  getString(R.string.search)
+                    searchView.queryHint = getString(R.string.search)
                 }
                 return true
             }
@@ -165,16 +162,24 @@ class NewsListFragment : Fragment() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
+    private fun setNewsList() {
+        NewsAdapter(NewsAdapter.NewsListener { news ->
+            newsListViewModel.onNewsClicked(news)
+        }).apply { newsListAdapter = this }
+
+        binding.newsRecycler.adapter = newsListAdapter
+    }
+
     private fun setSearchViewListeners(searchView: SearchView) {
         val queryTextListener: SearchView.OnQueryTextListener =
             object : SearchView.OnQueryTextListener {
                 override fun onQueryTextChange(newText: String): Boolean {
-                    viewModel.queryText.value = newText
+                    newsListViewModel.queryText.value = newText
                     return true
                 }
 
                 override fun onQueryTextSubmit(query: String): Boolean {
-                    viewModel.onNewsTextQuerySubmit()
+                    newsListViewModel.onNewsTextQuerySubmit()
                     return true
                 }
             }
@@ -183,6 +188,6 @@ class NewsListFragment : Fragment() {
     }
 
     fun refresh() {
-        this.viewModel.refreshNews()
+        this.newsListViewModel.refreshNews()
     }
 }
