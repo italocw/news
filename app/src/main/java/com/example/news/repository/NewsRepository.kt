@@ -1,17 +1,14 @@
 package com.example.news.repository
 
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
-import com.example.news.database.NewsDatabase
-import com.example.news.database.asDomainModel
+import android.app.Application
+import androidx.lifecycle.LiveData
+import com.example.news.Result
 import com.example.news.domain.News
-import com.example.news.network.NewsNetwork
-import com.example.news.network.asDomainModel
+import com.example.news.network.NewsRemoteDataSource
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 
+/*
 enum class FetchingState {
     IDLE, DOWNLOADING_NEWS
 }
@@ -63,4 +60,71 @@ class NewsRepository(private val database: NewsDatabase) {
 
         return returnedNewsNetworkContainer!!.asDomainModel() as ArrayList<News>
     }
+}*/
+
+
+class NewsRepository private constructor(application: Application) {
+
+    private val newsRemoteDataSource = NewsRemoteDataSource
+
+    //  private val tasksLocalDataSource:NewsLocalLocalDataSource
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+
+    companion object {
+        @Volatile
+        private var INSTANCE: NewsRepository? = null
+
+        fun getRepository(app: Application): NewsRepository {
+            return INSTANCE ?: NewsRepository(app).also {
+                INSTANCE = it
+
+            }
+        }
+    }
+
+
+
+    //  val database = NewsDatabase.getInstance(application)
+
+    //    tasksLocalDataSource = NewsLocalLocalDataSource(database.newsDao())
+
+
+    /*   fun observeSavedNewsList(): LiveData<Result<List<News>>> {
+         return newsDataSource.observeNewsList()
+     }
+
+
+
+     fun observeSavedNewsList(url: String): LiveData<Result<News>> {
+         return newsDataSource.observeNews(url)
+     }
+
+
+     suspend fun getSavedNews(url: String, forceUpdate: Boolean = false): Result<News> {
+         return newsDataSource.getNews(url)
+     }
+
+     suspend fun saveNews(news: News) {
+         coroutineScope {
+             launch { newsDataSource.saveNews(news) }
+         }
+     }
+
+     suspend fun deleteNews(url: String) {
+         coroutineScope {
+             launch { newsDataSource.deleteNews(url) }
+         }
+     }
+
+     private suspend fun getNewsWithUrl(url: String): Result<News> {
+         return newsDataSource.getNews(url)
+     }*/
+    fun observeNewsListFromWeb(): LiveData<Result<List<News>>> {
+        return newsRemoteDataSource.observeNewsList()
+    }
+
+    suspend fun updateNewsListFromWeb(queryText: String) {
+        newsRemoteDataSource.getNewsListFromWeb(queryText)
+    }
+
 }

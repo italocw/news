@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/newsListFragment"
-        android:name="com.example.news.viewmodels.NewsListFragment"
+        android:name="com.example.news.ui.news.NewsListFragment"
 
         android:label="@string/last_news"
         tools:layout="@layout/fragment_news_list">

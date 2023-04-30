@@ -1,4 +1,4 @@
-package com.example.news.viewmodels
+package com.example.news.ui.news
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,9 +21,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.news.R
 import com.example.news.databinding.FragmentNewsListBinding
-import com.example.news.ui.news.NewsAdapter
-import com.example.news.ui.news.NewsListScreenStatus
-import com.example.news.ui.news.NewsListViewModel
+import com.example.news.viewmodels.NewsListScreenStatus
+import com.example.news.viewmodels.NewsListViewModel
 
 class NewsListFragment : Fragment() {
     private val newsListViewModel by viewModels<NewsListViewModel>()
