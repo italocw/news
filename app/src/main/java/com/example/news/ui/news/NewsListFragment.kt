@@ -150,10 +150,10 @@ class NewsListFragment : Fragment() {
                 if (menuItem.itemId == R.id.menu_refresh) {
                     refresh()
                 } else {
-                    val searchView = menuItem.actionView as SearchView
-
-                    searchView.isIconified = false
-                    searchView.queryHint = getString(R.string.search)
+                    (menuItem.actionView as SearchView).apply {
+                        isIconified = false
+                        queryHint = getString(R.string.search)
+                    }
                 }
                 return true
             }
