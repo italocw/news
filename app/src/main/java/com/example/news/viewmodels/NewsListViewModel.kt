@@ -1,7 +1,5 @@
 package com.example.news.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,7 +17,7 @@ enum class NewsListScreenStatus {
 
 const val DEFAULT_QUERY_TEXT = "Brasil"
 
-class NewsListViewModel( private val newsRepository: NewsRepository ) : ViewModel() {
+class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel() {
 
     private val _navigateToNews = MutableLiveData<News?>()
     val navigateToNews

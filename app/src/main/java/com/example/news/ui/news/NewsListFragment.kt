@@ -26,7 +26,7 @@ import com.example.news.viewmodels.NewsListScreenStatus
 import com.example.news.viewmodels.NewsListViewModel
 
 class NewsListFragment : Fragment() {
-    private val newsListViewModel by viewModels<NewsListViewModel>(){
+    private val newsListViewModel by viewModels<NewsListViewModel>() {
         NewsListViewModelFactory(NewsRepository.getRepository(requireActivity().application))
     }
 
@@ -75,14 +75,12 @@ class NewsListFragment : Fragment() {
 
     private fun setScreenByDisplayingStatus(screenStatus: NewsListScreenStatus) {
         when (screenStatus) {
-            NewsListScreenStatus.SUCCESS -> setScreenAsUpdatedListWithNews()
-
-            NewsListScreenStatus.CONNECTION_PROBLEM, NewsListScreenStatus.EMPTY_LIST, NewsListScreenStatus.ERROR ->
-                setScreenAsNoNewsAreBeingShown()
-
+            NewsListScreenStatus.SUCCESS -> setScreenAsUpdatedWithNews()
             NewsListScreenStatus.LOADING -> setScreenAsLoadingData()
+            else -> setScreenAsLoadedWithoutNews()
         }
     }
+
 
     private fun setScreenAsLoadingData() {
         informationMessageTextView.visibility = GONE
@@ -98,7 +96,7 @@ class NewsListFragment : Fragment() {
 
     private fun listWithNewsIsShown() = !newsListViewModel.news.value.isNullOrEmpty()
 
-    private fun setScreenAsUpdatedListWithNews() {
+    private fun setScreenAsUpdatedWithNews() {
         swipeRefreshLayout.isRefreshing = false
         swipeRefreshLayout.isEnabled = true
         newsRecyclerView.visibility = VISIBLE
@@ -107,7 +105,7 @@ class NewsListFragment : Fragment() {
         informationMessageTextView.visibility = GONE
     }
 
-    private fun setScreenAsNoNewsAreBeingShown() {
+    private fun setScreenAsLoadedWithoutNews() {
         loadingDataLayout.visibility = GONE
         swipeRefreshLayout.isRefreshing = false
         newsRecyclerView.visibility = GONE
