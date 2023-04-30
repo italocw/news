@@ -30,7 +30,7 @@
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <LinearLayout
-            android:id="@+id/status_loading_wheel"
+            android:id="@+id/loading_data_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"

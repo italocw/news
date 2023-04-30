@@ -10,15 +10,12 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.SearchView
-import android.widget.TextView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.news.R
 import com.example.news.databinding.FragmentNewsListBinding
 import com.example.news.repository.NewsRepository
@@ -30,21 +27,16 @@ class NewsListFragment : Fragment() {
         NewsListViewModelFactory(NewsRepository.getRepository(requireActivity().application))
     }
 
-    private lateinit var binding: FragmentNewsListBinding
-    private lateinit var newsListAdapter: NewsAdapter
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var newsRecyclerView: RecyclerView
-    private lateinit var loadingDataLayout: View
-    private lateinit var informationMessageTextView: TextView
+    private lateinit var viewBinding: FragmentNewsListBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNewsListBinding.inflate(inflater, container, false).apply {
+        viewBinding = FragmentNewsListBinding.inflate(inflater, container, false).apply {
             viewModel = newsListViewModel
         }
 
-        return binding.root
+        return viewBinding.root
     }
 
 
@@ -52,13 +44,7 @@ class NewsListFragment : Fragment() {
         setNewsList()
         setMenu()
 
-        binding.let {
-            swipeRefreshLayout = it.swipeRefresh
-            newsRecyclerView = it.newsRecycler
-            loadingDataLayout = it.statusLoadingWheel
-            informationMessageTextView = it.informationMessage
-        }
-        swipeRefreshLayout.setOnRefreshListener { refresh() }
+        viewBinding.swipeRefresh.setOnRefreshListener { refresh() }
     }
 
     private fun setObservers() {
@@ -83,34 +69,39 @@ class NewsListFragment : Fragment() {
 
 
     private fun setScreenAsLoadingData() {
-        informationMessageTextView.visibility = GONE
+        viewBinding.apply {
+            informationMessage.visibility = GONE
 
-        if (listWithNewsIsShown()) {
-            swipeRefreshLayout.isRefreshing = true
+            if (listWithNewsIsShown()) {
+                swipeRefresh.isRefreshing = true
 
-        } else {
-            swipeRefreshLayout.isEnabled = false
-            loadingDataLayout.visibility = VISIBLE
+            } else {
+                swipeRefresh.isEnabled = false
+                loadingDataLayout.visibility = VISIBLE
+            }
         }
     }
 
     private fun listWithNewsIsShown() = !newsListViewModel.news.value.isNullOrEmpty()
 
     private fun setScreenAsUpdatedWithNews() {
-        swipeRefreshLayout.isRefreshing = false
-        swipeRefreshLayout.isEnabled = true
-        newsRecyclerView.visibility = VISIBLE
-        loadingDataLayout.visibility = GONE
-
-        informationMessageTextView.visibility = GONE
+        viewBinding.apply {
+            swipeRefresh.isRefreshing = false
+            swipeRefresh.isEnabled = true
+            newsRecycler.visibility = VISIBLE
+            loadingDataLayout.visibility = GONE
+            informationMessage.visibility = GONE
+        }
     }
 
     private fun setScreenAsLoadedWithoutNews() {
-        loadingDataLayout.visibility = GONE
-        swipeRefreshLayout.isRefreshing = false
-        newsRecyclerView.visibility = GONE
-        informationMessageTextView.visibility = VISIBLE
-        swipeRefreshLayout.isEnabled = true
+        viewBinding.apply {
+            loadingDataLayout.visibility = GONE
+            swipeRefresh.isRefreshing = false
+            newsRecycler.visibility = GONE
+            informationMessage.visibility = VISIBLE
+            swipeRefresh.isEnabled = true
+        }
     }
 
     private fun setNewsClickObserver() {
@@ -126,12 +117,12 @@ class NewsListFragment : Fragment() {
 
     private fun setNewsListObserver() {
         newsListViewModel.news.observe(viewLifecycleOwner) { newsList ->
-            newsListAdapter.submitList(newsList)
+            (viewBinding.newsRecycler.adapter as NewsAdapter).submitList(newsList)
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.lifecycleOwner = this.viewLifecycleOwner
+        viewBinding.lifecycleOwner = this.viewLifecycleOwner
 
         setViews()
         setObservers()
@@ -165,9 +156,7 @@ class NewsListFragment : Fragment() {
     private fun setNewsList() {
         NewsAdapter(NewsAdapter.NewsListener { news ->
             newsListViewModel.onNewsClicked(news)
-        }).apply { newsListAdapter = this }
-
-        binding.newsRecycler.adapter = newsListAdapter
+        }).apply { viewBinding.newsRecycler.adapter = this }
     }
 
     private fun setSearchViewListeners(searchView: SearchView) {
