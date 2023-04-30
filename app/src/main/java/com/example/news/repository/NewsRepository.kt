@@ -1,6 +1,6 @@
 package com.example.news.repository
 
-import NewsLocalDataSource
+import com.example.news.database.NewsLocalDataSource
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.room.Room
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 class NewsRepository private constructor(application: Application) {
 
     private val newsRemoteDataSource = NewsRemoteDataSource
-    private val newsLocalDataSource:NewsLocalDataSource
+    private val newsLocalDataSource: NewsLocalDataSource
 
     companion object {
         @Volatile

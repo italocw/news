@@ -1,3 +1,5 @@
+package com.example.news.database
+
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import com.example.news.domain.News
@@ -6,8 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.example.news.Result
 import com.example.news.Result.Success
-import com.example.news.database.NewsDao
-import com.example.news.database.asDomainModel
 import com.example.news.network.asDatabaseModel
 
 class NewsLocalDataSource internal constructor(
