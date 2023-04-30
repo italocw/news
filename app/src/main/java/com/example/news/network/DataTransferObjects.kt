@@ -47,17 +47,13 @@ fun NetworkNewsContainer.asDomainModel(): List<News> {
     }
 }
 
-fun NetworkNewsContainer.asDatabaseModel(): List<DatabaseNews> {
-    return networkNewsList.map {
-        DatabaseNews(
-            it.title,
-            it.url,
-            it.urlToImage,
-            it.description,
-            it.source.name,
-            it.author,
-            it.publishedAt,
-            it.content
-        )
-    }
-}
+fun News.asDatabaseModel() = DatabaseNews(
+    url,
+    title ?: "",
+    urlToImage ?: "",
+    description ?: "",
+    sourceName,
+    author ?: "",
+    publishedAt.toString(),
+    content ?: ""
+)

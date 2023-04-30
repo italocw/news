@@ -18,15 +18,5 @@ data class News(
     val content: String?
 ) : Parcelable {
     fun hasCompleteInformation() = null !in listOf(title, description, sourceName, author, content)
-    fun asDatabaseModel()= DatabaseNews (
-        url,
-        title?:"",
-        urlToImage?:"",
-        description?:"",
-        sourceName,
-        author?:"",
-        publishedAt.toString(),
-        content?:""
-    )
 
 }

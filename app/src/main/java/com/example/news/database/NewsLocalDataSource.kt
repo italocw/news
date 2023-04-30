@@ -8,6 +8,7 @@ import com.example.news.Result
 import com.example.news.Result.Success
 import com.example.news.database.NewsDao
 import com.example.news.database.asDomainModel
+import com.example.news.network.asDatabaseModel
 
 class NewsLocalDataSource internal constructor(
     private val newsDao: NewsDao,
@@ -25,7 +26,6 @@ class NewsLocalDataSource internal constructor(
             Success(it.asDomainModel())
         }
     }
-
 
     suspend fun getNewsList(): Result<List<News>> = withContext(ioDispatcher) {
         return@withContext try {
@@ -51,7 +51,6 @@ class NewsLocalDataSource internal constructor(
     suspend fun saveNews(news: News) = withContext(ioDispatcher) {
         newsDao.insertNews(news.asDatabaseModel())
     }
-
 
     suspend fun deleteNews(newsUrl: String) = withContext<Unit>(ioDispatcher) {
         newsDao.deleteNewsById(newsUrl)
