@@ -21,11 +21,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.news.R
 import com.example.news.databinding.FragmentNewsListBinding
+import com.example.news.repository.NewsRepository
 import com.example.news.viewmodels.NewsListScreenStatus
 import com.example.news.viewmodels.NewsListViewModel
 
 class NewsListFragment : Fragment() {
-    private val newsListViewModel by viewModels<NewsListViewModel>()
+    private val newsListViewModel by viewModels<NewsListViewModel>(){
+        NewsListViewModelFactory(NewsRepository.getRepository(requireActivity().application))
+    }
 
     private lateinit var binding: FragmentNewsListBinding
     private lateinit var newsListAdapter: NewsAdapter
