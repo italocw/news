@@ -4,17 +4,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.news.Result
 import com.example.news.domain.News
+import org.koin.java.KoinJavaComponent.inject
 
-object NewsRemoteDataSource {
+class NewsRemoteDataSource(private val newsService: GoogleNewsApiService) {
 
     private val observableNewsList = MutableLiveData<Result<List<News>>>()
 
-    fun observeNewsList():  LiveData<Result<List<News>>> {
+    fun observeNewsList(): LiveData<Result<List<News>>> {
         return observableNewsList
     }
 
     suspend fun getNewsListFromWeb(queryText: String): Result<List<News>> {
-        val newsListContainer = NewsNetwork.newsService.getEverythingNews(queryText)
+        val newsListContainer = newsService.getEverythingNews(queryText)
 
         newsListContainer.apply {
             return if (isSuccessful) {

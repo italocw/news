@@ -11,7 +11,6 @@ import com.example.news.domain.News
 class NewsAdapter(val clickListener: NewsListener) :
     ListAdapter<News, NewsAdapter.ViewHolder>(NewsDiffCallback()) {
 
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val ticket = getItem(position)
         holder.bind(ticket!!, clickListener)

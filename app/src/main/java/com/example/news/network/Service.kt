@@ -23,19 +23,6 @@ interface GoogleNewsApiService {
     suspend fun getEverythingNews(@Query("q") queryText:String ): Response<NetworkNewsContainer>
 
 }
-
-object NewsNetwork {
-
-    private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-
-    val gson = GsonBuilder().create()
-    private val retrofit = Retrofit.Builder()
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .addConverterFactory(MoshiConverterFactory.create(moshi)).baseUrl(Constants.BASE_API_URL).build()
-
-    val newsService: GoogleNewsApiService by lazy { retrofit.create(GoogleNewsApiService::class.java) }
-}
-
 suspend fun isInternetAvailable(): Boolean {
     return withContext(Dispatchers.IO) {
         try {

@@ -13,20 +13,16 @@ import android.widget.SearchView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.news.R
 import com.example.news.databinding.FragmentNewsListBinding
-import com.example.news.repository.NewsRepository
 import com.example.news.viewmodels.NewsListScreenStatus
 import com.example.news.viewmodels.NewsListViewModel
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class NewsListFragment : Fragment() {
-    private val newsListViewModel by viewModels<NewsListViewModel>() {
-        NewsListViewModelFactory(NewsRepository.getRepository(requireActivity().application))
-    }
-
+    private val newsListViewModel by activityViewModel<NewsListViewModel>()
     private lateinit var viewBinding: FragmentNewsListBinding
 
     override fun onCreateView(

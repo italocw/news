@@ -24,8 +24,6 @@ fun TextView.setContent(news: News?) {
     }
 }
 
-
-
 @BindingAdapter("statusInformationMessage")
 fun TextView.setStatusInformationMessage(newsListScreenStatus: NewsListScreenStatus) {
     if (newsListScreenStatus == NewsListScreenStatus.CONNECTION_PROBLEM) {
