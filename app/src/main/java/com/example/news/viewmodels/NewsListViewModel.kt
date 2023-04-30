@@ -37,7 +37,7 @@ class NewsListViewModel(
                 }
             }
             newsRepository.observeNewsListFromWeb().switchMap {
-               getNewsWithCompleteInformation(it)
+                getNewsWithCompleteInformation(it)
             }
         }
 
@@ -84,7 +84,6 @@ class NewsListViewModel(
         _forceUpdate.value = true
     }
 
-
     fun onNewsNavigated() {
         _navigateToNews.value = null
     }
@@ -95,7 +94,6 @@ class NewsListViewModel(
         }
     }
 
-
     private fun getNewsWithCompleteInformation(newsResult: Result<List<News>>): LiveData<List<News>> {
         val result = MutableLiveData<List<News>>()
 
@@ -103,8 +101,11 @@ class NewsListViewModel(
             viewModelScope.launch {
                 val newsToDisplay = newsResult.data.filter { it.hasCompleteInformation() }
 
-                if (newsToDisplay.isEmpty()) _screenStatus.value = NewsListScreenStatus.EMPTY_LIST
-                else _screenStatus.value = NewsListScreenStatus.SUCCESS
+                _screenStatus.value =
+                    if (newsToDisplay.isEmpty())
+                        NewsListScreenStatus.EMPTY_LIST
+                    else
+                        NewsListScreenStatus.SUCCESS
 
                 result.value = newsToDisplay
             }

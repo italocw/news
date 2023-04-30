@@ -1,8 +1,10 @@
 package com.example.news.domain
 
 import android.os.Parcelable
+import com.example.news.database.DatabaseNews
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Parcelize
 data class News(
@@ -16,5 +18,15 @@ data class News(
     val content: String?
 ) : Parcelable {
     fun hasCompleteInformation() = null !in listOf(title, description, sourceName, author, content)
+    fun asDatabaseModel()= DatabaseNews (
+        url,
+        title?:"",
+        urlToImage?:"",
+        description?:"",
+        sourceName,
+        author?:"",
+        publishedAt.toString(),
+        content?:""
+    )
 
 }
