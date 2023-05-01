@@ -30,7 +30,7 @@ data class Source(
 
 fun NetworkNewsContainer.asDomainModel(): List<News> {
 
-    return networkNewsList!!.map {
+    return networkNewsList.map {
         News(
             it.title,
             it.url,
