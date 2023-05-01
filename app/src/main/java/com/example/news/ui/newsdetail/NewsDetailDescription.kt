@@ -12,8 +12,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
@@ -22,7 +24,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.news.R
 import com.example.news.domain.News
 import com.google.accompanist.themeadapter.material.MdcTheme
-import java.time.LocalDateTime
 
 @Composable
 fun NewsDetailDescription(news: News) {
@@ -44,25 +45,6 @@ fun NewsDetailContent(news: News) {
     }
 }
 
-@Preview
-@Composable
-private fun NewsDetailContentPreview() {
-    val news = News(
-        "Motorista morre em acidente",
-        "www.google.com",
-        "https://img.olhardigital.com.br/wp-content/uploads/2023/04/Destaque-Bitcoin.jpg",
-        "descrição",
-        "uol",
-        "José",
-        LocalDateTime.now(),
-        "Conteúdo de grande qualidade"
-    )
-    MaterialTheme {
-        NewsDetailContent(news)
-    }
-}
-
-
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun NewsImage(urlToImage: String) {
@@ -71,20 +53,11 @@ private fun NewsImage(urlToImage: String) {
     GlideImage(
         model = urlToImage,
         contentDescription = stringResource(R.string.content_description_media),
-        modifier = Modifier
+              modifier = Modifier
             .height(imageHeight)
             .fillMaxWidth()
     )
 }
-
-@Preview
-@Composable
-private fun NewsImagePreview() {
-    MdcTheme {
-        NewsImage("https://img.olhardigital.com.br/wp-content/uploads/2023/04/Destaque-Bitcoin.jpg")
-    }
-}
-
 @Composable
 private fun NewsTitle(title: String) {
     Text(
@@ -136,7 +109,7 @@ private fun NewsContentText(textContent: String) {
 @Composable
 private fun NewsContentTextPreview() {
     MdcTheme {
-        NewsContentText("Xuxa acusa senador")
+        NewsContentText("Senador se defende e abre processo")
     }
 }
 
@@ -156,7 +129,7 @@ private fun NewsAuthor(author: String) {
 @Composable
 private fun NewsAuthorPreview() {
     MdcTheme {
-        NewsAuthor("Xuxa acusa senador")
+        NewsAuthor("Fred")
     }
 }
 
@@ -178,7 +151,7 @@ private fun NewsSourceName(sourceName: String) {
 @Composable
 private fun NewsSourceNamePreview() {
     MdcTheme {
-        NewsSourceName("Xuxa acusa senador")
+        NewsSourceName("www.noticas.com.br")
     }
 }
 
