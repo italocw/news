@@ -4,7 +4,6 @@ import android.widget.TextView
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -12,15 +11,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import coil.compose.AsyncImage
 import com.example.news.R
 import com.example.news.domain.News
 import com.google.accompanist.themeadapter.material.MdcTheme
@@ -45,19 +43,20 @@ fun NewsDetailContent(news: News) {
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun NewsImage(urlToImage: String) {
-    val imageHeight = dimensionResource(R.dimen.news_preview_image_height)
+    val placeholder = R.drawable.news_image_placeholder
 
-    GlideImage(
+    AsyncImage(
         model = urlToImage,
+        contentScale = ContentScale.FillWidth,
+        error = painterResource(placeholder),
+        placeholder = painterResource(placeholder),
         contentDescription = stringResource(R.string.content_description_media),
-              modifier = Modifier
-            .height(imageHeight)
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     )
 }
+
 @Composable
 private fun NewsTitle(title: String) {
     Text(

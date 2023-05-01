@@ -30,7 +30,7 @@ interface NewsDao {
     suspend fun deleteNews()
 }
 
-@Database(entities = [DatabaseNews::class], version = 1)
+@Database(entities = [DatabaseNews::class], version = 1, exportSchema = false)
 abstract class NewsDatabase: RoomDatabase() {
     abstract val newsDao: NewsDao
 }

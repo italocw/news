@@ -3,7 +3,8 @@ package com.example.news.ui
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.bumptech.glide.Glide
+import coil.load
+
 import com.example.news.R
 import com.example.news.domain.News
 import com.example.news.viewmodels.NewsListScreenStatus
@@ -11,11 +12,11 @@ import com.example.news.viewmodels.NewsListScreenStatus
 @BindingAdapter("image")
 fun ImageView.setImage(news: News?) {
     news?.let {
-        Glide.with(context)
-            .load((news.urlToImage))
-            .placeholder(R.drawable.news_image_placeholder)
-            .into(this)
-
+        val placeholder = R.drawable.news_image_placeholder
+        this.load(news.urlToImage) {
+            placeholder(placeholder)
+            error(placeholder)
+        }
     }
 }
 
@@ -25,7 +26,7 @@ fun TextView.setStatusInformationMessage(newsListScreenStatus: NewsListScreenSta
         text = resources.getText(R.string.internet_connection_not_available)
     } else if (newsListScreenStatus == NewsListScreenStatus.EMPTY_LIST) {
         text = resources.getText(R.string.empty_news_list_text)
-    } else  {
+    } else {
         text = resources.getText(R.string.an_error_occurred_when_trying_to_get_data)
     }
 }
