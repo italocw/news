@@ -21,7 +21,6 @@ class NewsDetailFragment : Fragment() {
 
             newsDetailComposeView.apply {
                 setContent {
-                    // You're in Compose world!
                     MdcTheme() {
                         NewsDetailDescription(fromBundle(requireArguments()).selectedNews)
                     }

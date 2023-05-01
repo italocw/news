@@ -29,11 +29,8 @@ fun NewsDetailDescription(news: News) {
     NewsDetailContent(news)
 }
 
-
 @Composable
 fun NewsDetailContent(news: News) {
-    val normalPadding = dimensionResource(R.dimen.margin)
-
     Surface {
         Column(Modifier.fillMaxHeight()) {
             news.apply {
@@ -88,7 +85,6 @@ private fun NewsImagePreview() {
     }
 }
 
-
 @Composable
 private fun NewsTitle(title: String) {
     Text(
@@ -109,7 +105,6 @@ private fun NewsTitlePreview() {
     }
 }
 
-
 @Composable
 private fun NewsContentText(textContent: String) {
 
@@ -124,7 +119,7 @@ private fun NewsContentText(textContent: String) {
     AndroidView(
         factory = { context ->
             return@AndroidView TextView(context).apply {
-                setTextAppearance(androidx.appcompat.R.style.Base_TextAppearance_AppCompat_Body1)
+                setTextAppearance(androidx.appcompat.R.style.TextAppearance_AppCompat_Body1)
             }
         },
         update = {

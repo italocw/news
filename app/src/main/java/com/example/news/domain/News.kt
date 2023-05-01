@@ -17,6 +17,12 @@ data class News(
     val publishedAt: LocalDateTime,
     val content: String?
 ) : Parcelable {
-    fun hasCompleteInformation() = null !in listOf(title, description, sourceName, author, content)
+    fun hasCompleteInformation() = null !in listOf(
+        title,
+        description,
+        urlToImage,
+        sourceName,
+        author,
+        content)
 
 }

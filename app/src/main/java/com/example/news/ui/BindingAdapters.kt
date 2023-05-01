@@ -13,7 +13,9 @@ fun ImageView.setImage(news: News?) {
     news?.let {
         Glide.with(context)
             .load((news.urlToImage))
+            .placeholder(R.drawable.news_image_placeholder)
             .into(this)
+
     }
 }
 
