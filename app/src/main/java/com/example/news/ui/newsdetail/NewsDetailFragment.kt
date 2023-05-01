@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.news.databinding.FragmentNewsDetailBinding
-import com.example.news.domain.News
 import com.example.news.ui.newsdetail.NewsDetailFragmentArgs.fromBundle
 import com.google.accompanist.themeadapter.material.MdcTheme
 
@@ -20,7 +19,7 @@ class NewsDetailFragment : Fragment() {
             lifecycleOwner = viewLifecycleOwner
 
 
-            composeView.apply {
+            newsDetailComposeView.apply {
                 setContent {
                     // You're in Compose world!
                     MdcTheme() {
