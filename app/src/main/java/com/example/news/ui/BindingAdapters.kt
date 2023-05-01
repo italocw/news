@@ -19,13 +19,6 @@ fun ImageView.setImage(news: News?) {
     }
 }
 
-@BindingAdapter("content")
-fun TextView.setContent(news: News?) {
-    news?.let {
-        text = news.content
-    }
-}
-
 @BindingAdapter("statusInformationMessage")
 fun TextView.setStatusInformationMessage(newsListScreenStatus: NewsListScreenStatus) {
     if (newsListScreenStatus == NewsListScreenStatus.CONNECTION_PROBLEM) {
