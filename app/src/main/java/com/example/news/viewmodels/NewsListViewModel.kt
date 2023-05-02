@@ -34,7 +34,7 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
         get() = _queryText
 
     init {
-        _uiState.value.resultState = NewsListResultState.SEARCHING
+        _uiState.value.dataState = NewsListResultState.SEARCHING
         updateScreen()
     }
 
@@ -60,7 +60,7 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
     }
 
     fun onNewsTextQuerySubmit() {
-        _uiState.value.resultState = NewsListResultState.SEARCHING
+        _uiState.value.dataState = NewsListResultState.SEARCHING
         updateScreen()
     }
 
@@ -70,7 +70,7 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
 
     fun refreshNews() {
         if (!_uiState.value.isLoading()) {
-            _uiState.value.resultState = NewsListResultState.UPDATING
+            _uiState.value.dataState = NewsListResultState.UPDATING
             updateScreen()
         }
     }

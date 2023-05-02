@@ -30,7 +30,7 @@ import org.koin.androidx.viewmodel.ext.android.activityViewModel
 class NewsListFragment : Fragment() {
     private val newsListViewModel by activityViewModel<NewsListViewModel>()
     private lateinit var viewBinding: FragmentNewsListBinding
-
+    private lateinit var screenState: NewsListUiState
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -58,21 +58,23 @@ class NewsListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 newsListViewModel.uiState.collect {
-                    setScreenContentByState(it)
+                    screenState = it
+                    setScreenContentByState()
                 }
             }
         }
     }
 
-    private fun setScreenContentByState(screenState: NewsListUiState) {
-        when (screenState.resultState) {
-            NewsListResultState.SUCCESS -> setScreenAsUpdatedWithNews(screenState)
-            NewsListResultState.UPDATING, NewsListResultState.SEARCHING -> setScreenAsLoadingData(screenState)
-            else -> setScreenAsLoadedWithoutNews()
-        }
+    private fun setScreenContentByState() {
+        if (screenState.dataState == NewsListResultState.SUCCESS) {
+            setScreenAsUpdatedWithNews()
+        } else if (screenState.isLoading()) {
+            setScreenAsLoadingData()
+        } else setScreenAsLoadedWithoutNews()
     }
 
-    private fun setScreenAsLoadingData(screenState: NewsListUiState) {
+
+    private fun setScreenAsLoadingData() {
         viewBinding.apply {
             resultInformationMessage.visibility = GONE
 
@@ -86,13 +88,11 @@ class NewsListFragment : Fragment() {
         }
     }
 
-
-    private fun setScreenAsUpdatedWithNews(newsList: NewsListUiState) {
+    private fun setScreenAsUpdatedWithNews() {
         viewBinding.apply {
-            (newsRecycler.adapter as NewsAdapter).submitList(newsList.getNewsWithCompleteInformation())
+            (newsRecycler.adapter as NewsAdapter).submitList(screenState.newsWithCompleteInformationList)
 
-            swipeRefresh.isRefreshing = false
-            swipeRefresh.isEnabled = true
+            letSwipeRefreshAvailable()
             newsRecycler.visibility = VISIBLE
             loadingDataLayout.visibility = GONE
             resultInformationMessage.visibility = GONE
@@ -101,12 +101,17 @@ class NewsListFragment : Fragment() {
 
     private fun setScreenAsLoadedWithoutNews() {
         viewBinding.apply {
+            letSwipeRefreshAvailable()
+
             loadingDataLayout.visibility = GONE
-            swipeRefresh.isRefreshing = false
             newsRecycler.visibility = GONE
             resultInformationMessage.visibility = VISIBLE
-            swipeRefresh.isEnabled = true
         }
+    }
+
+    private fun FragmentNewsListBinding.letSwipeRefreshAvailable() {
+        swipeRefresh.isRefreshing = false
+        swipeRefresh.isEnabled = true
     }
 
     private fun setNewsClickObserver() {

@@ -9,19 +9,19 @@ import com.example.news.viewmodels.NewsListResultState
 
 
 class NewsListUiState(private val newsList: Result<List<News>>) {
-    var resultState: NewsListResultState
+    var dataState: NewsListResultState
     var newsWithCompleteInformationList: List<News>
 
     init {
         newsWithCompleteInformationList = getNewsWithCompleteInformation()
-        resultState = getStatus()
+        dataState = getStatus()
     }
 
     fun isLoading() =
-        resultState == NewsListResultState.UPDATING || resultState == NewsListResultState.SEARCHING
+        dataState == NewsListResultState.UPDATING || dataState == NewsListResultState.SEARCHING
 
 
-    fun getNewsWithCompleteInformation(): List<News> {
+   private fun getNewsWithCompleteInformation(): List<News> {
         return if (newsList.succeeded) {
             (newsList as Result.Success).data.filter {
                 it.hasCompleteInformation()
@@ -32,7 +32,7 @@ class NewsListUiState(private val newsList: Result<List<News>>) {
     }
 
     fun getUserInformationMessage(): Int? {
-        return when (resultState) {
+        return when (dataState) {
             NewsListResultState.SEARCHING -> R.string.getting_news
             NewsListResultState.CONNECTION_PROBLEM -> R.string.internet_connection_not_available
             NewsListResultState.EMPTY_LIST -> R.string.empty_news_list_text
