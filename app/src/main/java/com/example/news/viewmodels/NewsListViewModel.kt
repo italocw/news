@@ -6,14 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.news.Result
 import com.example.news.domain.News
 import com.example.news.repository.NewsRepository
+import com.example.news.ui.news.NewsListDataState
 import com.example.news.ui.news.NewsListUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
-enum class NewsListResultState {
-    UPDATING, SUCCESS, CONNECTION_PROBLEM, EMPTY_LIST, ERROR, SEARCHING
-}
 
 
 const val DEFAULT_QUERY_TEXT = "Brasil"
@@ -34,7 +31,7 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
         get() = _queryText
 
     init {
-        _uiState.value.dataState = NewsListResultState.SEARCHING
+        _uiState.value.dataState = NewsListDataState.SEARCHING
         updateScreen()
     }
 
@@ -42,10 +39,8 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
         viewModelScope.launch {
             newsRepository.updateNewsListFromWeb(getTreatedTextQuery())
             _uiState.value = NewsListUiState(newsRepository.getLastResult())
-
         }
     }
-
 
     private fun getTreatedTextQuery(): String {
         _queryText.value.let {
@@ -60,7 +55,7 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
     }
 
     fun onNewsTextQuerySubmit() {
-        _uiState.value.dataState = NewsListResultState.SEARCHING
+        _uiState.value.dataState = NewsListDataState.SEARCHING
         updateScreen()
     }
 
@@ -70,7 +65,7 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
 
     fun refreshNews() {
         if (!_uiState.value.isLoading()) {
-            _uiState.value.dataState = NewsListResultState.UPDATING
+            _uiState.value.dataState = NewsListDataState.UPDATING
             updateScreen()
         }
     }

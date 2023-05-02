@@ -21,7 +21,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.news.R
 import com.example.news.databinding.FragmentNewsListBinding
-import com.example.news.viewmodels.NewsListResultState
 import com.example.news.viewmodels.NewsListViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
@@ -66,13 +65,12 @@ class NewsListFragment : Fragment() {
     }
 
     private fun setScreenContentByState() {
-        if (screenState.dataState == NewsListResultState.SUCCESS) {
+        if (screenState.dataState == NewsListDataState.POPULATED) {
             setScreenAsUpdatedWithNews()
         } else if (screenState.isLoading()) {
             setScreenAsLoadingData()
         } else setScreenAsLoadedWithoutNews()
     }
-
 
     private fun setScreenAsLoadingData() {
         viewBinding.apply {

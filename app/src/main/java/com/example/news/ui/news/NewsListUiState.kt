@@ -5,11 +5,13 @@ import com.example.news.Result
 import com.example.news.domain.News
 import com.example.news.network.InternetMissingException
 import com.example.news.succeeded
-import com.example.news.viewmodels.NewsListResultState
 
+enum class NewsListDataState {
+    UPDATING, POPULATED, CONNECTION_PROBLEM, EMPTY_LIST, ERROR, SEARCHING
+}
 
 class NewsListUiState(private val newsList: Result<List<News>>) {
-    var dataState: NewsListResultState
+    var dataState: NewsListDataState
     var newsWithCompleteInformationList: List<News>
 
     init {
@@ -18,7 +20,7 @@ class NewsListUiState(private val newsList: Result<List<News>>) {
     }
 
     fun isLoading() =
-        dataState == NewsListResultState.UPDATING || dataState == NewsListResultState.SEARCHING
+        dataState == NewsListDataState.UPDATING || dataState == NewsListDataState.SEARCHING
 
 
    private fun getNewsWithCompleteInformation(): List<News> {
@@ -33,35 +35,35 @@ class NewsListUiState(private val newsList: Result<List<News>>) {
 
     fun getUserInformationMessage(): Int? {
         return when (dataState) {
-            NewsListResultState.SEARCHING -> R.string.getting_news
-            NewsListResultState.CONNECTION_PROBLEM -> R.string.internet_connection_not_available
-            NewsListResultState.EMPTY_LIST -> R.string.empty_news_list_text
-            NewsListResultState.ERROR -> R.string.an_error_occurred_when_trying_to_get_data
-            NewsListResultState.SUCCESS, NewsListResultState.UPDATING -> null
+            NewsListDataState.SEARCHING -> R.string.getting_news
+            NewsListDataState.CONNECTION_PROBLEM -> R.string.internet_connection_not_available
+            NewsListDataState.EMPTY_LIST -> R.string.empty_news_list_text
+            NewsListDataState.ERROR -> R.string.an_error_occurred_when_trying_to_get_data
+            NewsListDataState.POPULATED, NewsListDataState.UPDATING -> null
         }
     }
 
 
-    private fun getStatus(): NewsListResultState {
+    private fun getStatus(): NewsListDataState {
         return when (newsList) {
-            is Result.Searching -> NewsListResultState.SEARCHING
+            is Result.Searching -> NewsListDataState.SEARCHING
             is Result.Error -> getErrorUserStatus()
             is Result.Success -> return if (newsWithCompleteInformationList.isNullOrEmpty()) {
-                NewsListResultState.EMPTY_LIST
+                NewsListDataState.EMPTY_LIST
             } else {
-                NewsListResultState.SUCCESS
+                NewsListDataState.POPULATED
             }
 
         }
     }
 
 
-    private fun getErrorUserStatus(): NewsListResultState {
+    private fun getErrorUserStatus(): NewsListDataState {
         val exception = (newsList as Result.Error).exception
 
         return when (exception) {
-            is InternetMissingException -> NewsListResultState.CONNECTION_PROBLEM
-            else -> NewsListResultState.ERROR
+            is InternetMissingException -> NewsListDataState.CONNECTION_PROBLEM
+            else -> NewsListDataState.ERROR
         }
 
     }
