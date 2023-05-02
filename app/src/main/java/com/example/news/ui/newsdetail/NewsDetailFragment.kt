@@ -29,7 +29,6 @@ class NewsDetailFragment : Fragment() {
         }
 
 
-
         return binding.root
     }
 
