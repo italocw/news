@@ -57,14 +57,11 @@ class NewsRepository private constructor(
     }
 
 
-     fun observeNewsListFromWeb():  LiveData<Result<List<News>>>  {
-
-        return newsRemoteDataSource.observeNewsList()
-
-    }
-
-    suspend fun updateNewsListFromWeb(queryText: String) {
+    suspend fun updateNewsListFromWeb(queryText: String){
         newsRemoteDataSource.getNewsListFromWeb(queryText)
+    }
+     fun getLastResult(): Result<List<News>>{
+        return newsRemoteDataSource.data
     }
 
 

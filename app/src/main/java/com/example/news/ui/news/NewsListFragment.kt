@@ -14,11 +14,14 @@ import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.news.R
 import com.example.news.databinding.FragmentNewsListBinding
 import com.example.news.viewmodels.NewsListScreenStatus
 import com.example.news.viewmodels.NewsListViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 class NewsListFragment : Fragment() {
@@ -32,6 +35,7 @@ class NewsListFragment : Fragment() {
             viewModel = newsListViewModel
         }
 
+        setScreenState()
         return viewBinding.root
     }
 
@@ -45,24 +49,25 @@ class NewsListFragment : Fragment() {
 
     private fun setObservers() {
         setNewsClickObserver()
-        setScreenStatusObserver()
-        setNewsListObserver()
     }
 
-    private fun setScreenStatusObserver() {
-        newsListViewModel.screenStatus.observe(viewLifecycleOwner) { screenStatus ->
-            setScreenByDisplayingStatus(screenStatus)
+    private fun setScreenState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                newsListViewModel.uiState.collect() {
+                    setScreenContentByState(it)
+                }
+            }
         }
     }
 
-    private fun setScreenByDisplayingStatus(screenStatus: NewsListScreenStatus) {
-        when (screenStatus) {
-            NewsListScreenStatus.SUCCESS -> setScreenAsUpdatedWithNews()
+    private fun setScreenContentByState(screenState: NewsListUiState) {
+        when (screenState.state) {
+            NewsListScreenStatus.SUCCESS -> setScreenAsUpdatedWithNews(screenState)
             NewsListScreenStatus.LOADING -> setScreenAsLoadingData()
             else -> setScreenAsLoadedWithoutNews()
         }
     }
-
 
     private fun setScreenAsLoadingData() {
         viewBinding.apply {
@@ -78,15 +83,19 @@ class NewsListFragment : Fragment() {
         }
     }
 
-    private fun listWithNewsIsShown() = !newsListViewModel.news.value.isNullOrEmpty()
+    private fun listWithNewsIsShown() = newsListViewModel.uiState.value.state !=
+            NewsListScreenStatus.SUCCESS
 
-    private fun setScreenAsUpdatedWithNews() {
+    private fun setScreenAsUpdatedWithNews(newsList: NewsListUiState) {
         viewBinding.apply {
+            (newsRecycler.adapter as NewsAdapter).submitList(newsList.getNewsWithCompleteInformation())
+
             swipeRefresh.isRefreshing = false
             swipeRefresh.isEnabled = true
             newsRecycler.visibility = VISIBLE
             loadingDataLayout.visibility = GONE
             informationMessage.visibility = GONE
+
         }
     }
 
@@ -111,11 +120,6 @@ class NewsListFragment : Fragment() {
         }
     }
 
-    private fun setNewsListObserver() {
-        newsListViewModel.news.observe(viewLifecycleOwner) { newsList ->
-            (viewBinding.newsRecycler.adapter as NewsAdapter).submitList(newsList)
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewBinding.lifecycleOwner = this.viewLifecycleOwner

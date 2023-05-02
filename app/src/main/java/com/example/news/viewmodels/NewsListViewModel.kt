@@ -1,19 +1,20 @@
 package com.example.news.viewmodels
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.example.news.Result
 import com.example.news.domain.News
-import com.example.news.network.isInternetAvailable
 import com.example.news.repository.NewsRepository
+import com.example.news.ui.news.NewsListUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 enum class NewsListScreenStatus {
     LOADING, SUCCESS, CONNECTION_PROBLEM, EMPTY_LIST, ERROR
 }
+
 
 const val DEFAULT_QUERY_TEXT = "Brasil"
 
@@ -23,46 +24,27 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
     val navigateToNews
         get() = _navigateToNews
 
-    private val _forceUpdate = MutableLiveData(false)
 
-    private val _news: LiveData<List<News>> =
-        _forceUpdate.switchMap { forceUpdate ->
-            if (forceUpdate) {
-                viewModelScope.launch {
-                    tryToUpdateNewsFromWeb()
-                }
-            }
-            newsRepository.observeNewsListFromWeb().switchMap {
-                getNewsWithCompleteInformation(it)
-            }
-        }
-
-    private suspend fun tryToUpdateNewsFromWeb() {
-        _screenStatus.value = NewsListScreenStatus.LOADING
-
-        if (isInternetAvailable()) newsRepository.updateNewsListFromWeb(
-            getTreatedTextQuery()
-        )
-        else _screenStatus.value = NewsListScreenStatus.CONNECTION_PROBLEM
-    }
-
-    val news
-        get() = _news
-
-
-    private val _screenStatus = MutableLiveData(NewsListScreenStatus.LOADING)
-    val screenStatus
-        get() = _screenStatus
+    private val _uiState = MutableStateFlow(NewsListUiState(Result.Loading))
+    val uiState: StateFlow<NewsListUiState> = _uiState
 
 
     private val _queryText = MutableLiveData<String>()
     val queryText
         get() = _queryText
 
-
     init {
-        _forceUpdate.value = true
+        updateScreen()
     }
+
+    private fun updateScreen() {
+        viewModelScope.launch {
+            _uiState.value =NewsListUiState(Result.Loading)
+            newsRepository.updateNewsListFromWeb(getTreatedTextQuery())
+            _uiState.value = NewsListUiState(newsRepository.getLastResult())
+        }
+    }
+
 
     private fun getTreatedTextQuery(): String {
         _queryText.value.let {
@@ -77,7 +59,7 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
     }
 
     fun onNewsTextQuerySubmit() {
-        _forceUpdate.value = true
+        updateScreen()
     }
 
     fun onNewsNavigated() {
@@ -85,30 +67,8 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
     }
 
     fun refreshNews() {
-        if (screenStatus.value != NewsListScreenStatus.LOADING) {
-            _forceUpdate.value = true
+        if (uiState.value.state != NewsListScreenStatus.LOADING) {
+            updateScreen()
         }
-    }
-
-    private fun getNewsWithCompleteInformation(newsResult: Result<List<News>>): LiveData<List<News>> {
-        val result = MutableLiveData<List<News>>()
-
-        if (newsResult is Result.Success) {
-            viewModelScope.launch {
-                val newsToDisplay = newsResult.data.filter { it.hasCompleteInformation() }
-
-                _screenStatus.value =
-                    if (newsToDisplay.isEmpty())
-                        NewsListScreenStatus.EMPTY_LIST
-                    else
-                        NewsListScreenStatus.SUCCESS
-
-                result.value = newsToDisplay
-            }
-        } else {
-            _screenStatus.value = NewsListScreenStatus.ERROR
-        }
-
-        return result
     }
 }
