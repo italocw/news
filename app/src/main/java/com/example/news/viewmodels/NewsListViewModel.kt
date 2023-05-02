@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-enum class NewsListScreenStatus {
-    LOADING, SUCCESS, CONNECTION_PROBLEM, EMPTY_LIST, ERROR
+enum class NewsListResultState {
+    UPDATING, SUCCESS, CONNECTION_PROBLEM, EMPTY_LIST, ERROR, SEARCHING
 }
 
 
@@ -25,7 +25,7 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
         get() = _navigateToNews
 
 
-    private val _uiState = MutableStateFlow(NewsListUiState(Result.Loading))
+    private val _uiState = MutableStateFlow(NewsListUiState(Result.Searching))
     val uiState: StateFlow<NewsListUiState> = _uiState
 
 
@@ -34,14 +34,15 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
         get() = _queryText
 
     init {
+        _uiState.value.resultState = NewsListResultState.SEARCHING
         updateScreen()
     }
 
     private fun updateScreen() {
         viewModelScope.launch {
-            _uiState.value =NewsListUiState(Result.Loading)
             newsRepository.updateNewsListFromWeb(getTreatedTextQuery())
             _uiState.value = NewsListUiState(newsRepository.getLastResult())
+
         }
     }
 
@@ -59,6 +60,7 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
     }
 
     fun onNewsTextQuerySubmit() {
+        _uiState.value.resultState = NewsListResultState.SEARCHING
         updateScreen()
     }
 
@@ -67,7 +69,8 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
     }
 
     fun refreshNews() {
-        if (uiState.value.state != NewsListScreenStatus.LOADING) {
+        if (!_uiState.value.isLoading()) {
+            _uiState.value.resultState = NewsListResultState.UPDATING
             updateScreen()
         }
     }

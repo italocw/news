@@ -1,5 +1,6 @@
 package com.example.news.ui.news
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -19,10 +21,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.news.R
 import com.example.news.databinding.FragmentNewsListBinding
-import com.example.news.viewmodels.NewsListScreenStatus
+import com.example.news.viewmodels.NewsListResultState
 import com.example.news.viewmodels.NewsListViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
+
 
 class NewsListFragment : Fragment() {
     private val newsListViewModel by activityViewModel<NewsListViewModel>()
@@ -54,7 +57,7 @@ class NewsListFragment : Fragment() {
     private fun setScreenState() {
         viewLifecycleOwner.lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                newsListViewModel.uiState.collect() {
+                newsListViewModel.uiState.collect {
                     setScreenContentByState(it)
                 }
             }
@@ -62,18 +65,18 @@ class NewsListFragment : Fragment() {
     }
 
     private fun setScreenContentByState(screenState: NewsListUiState) {
-        when (screenState.state) {
-            NewsListScreenStatus.SUCCESS -> setScreenAsUpdatedWithNews(screenState)
-            NewsListScreenStatus.LOADING -> setScreenAsLoadingData()
+        when (screenState.resultState) {
+            NewsListResultState.SUCCESS -> setScreenAsUpdatedWithNews(screenState)
+            NewsListResultState.UPDATING, NewsListResultState.SEARCHING -> setScreenAsLoadingData(screenState)
             else -> setScreenAsLoadedWithoutNews()
         }
     }
 
-    private fun setScreenAsLoadingData() {
+    private fun setScreenAsLoadingData(screenState: NewsListUiState) {
         viewBinding.apply {
-            informationMessage.visibility = GONE
+            resultInformationMessage.visibility = GONE
 
-            if (listWithNewsIsShown()) {
+            if (screenState.listWithNewsIsShown()) {
                 swipeRefresh.isRefreshing = true
 
             } else {
@@ -83,8 +86,6 @@ class NewsListFragment : Fragment() {
         }
     }
 
-    private fun listWithNewsIsShown() = newsListViewModel.uiState.value.state !=
-            NewsListScreenStatus.SUCCESS
 
     private fun setScreenAsUpdatedWithNews(newsList: NewsListUiState) {
         viewBinding.apply {
@@ -94,8 +95,7 @@ class NewsListFragment : Fragment() {
             swipeRefresh.isEnabled = true
             newsRecycler.visibility = VISIBLE
             loadingDataLayout.visibility = GONE
-            informationMessage.visibility = GONE
-
+            resultInformationMessage.visibility = GONE
         }
     }
 
@@ -104,7 +104,7 @@ class NewsListFragment : Fragment() {
             loadingDataLayout.visibility = GONE
             swipeRefresh.isRefreshing = false
             newsRecycler.visibility = GONE
-            informationMessage.visibility = VISIBLE
+            resultInformationMessage.visibility = VISIBLE
             swipeRefresh.isEnabled = true
         }
     }
@@ -160,6 +160,7 @@ class NewsListFragment : Fragment() {
     }
 
     private fun setSearchViewListeners(searchView: SearchView) {
+
         val queryTextListener: SearchView.OnQueryTextListener =
             object : SearchView.OnQueryTextListener {
                 override fun onQueryTextChange(newText: String): Boolean {
@@ -169,7 +170,15 @@ class NewsListFragment : Fragment() {
 
                 override fun onQueryTextSubmit(query: String): Boolean {
                     newsListViewModel.onNewsTextQuerySubmit()
+                    hideKeyboard()
+
                     return true
+                }
+
+                private fun hideKeyboard() {
+                    val inputMethodManager =
+                        requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(view!!.windowToken, 0)
                 }
             }
 

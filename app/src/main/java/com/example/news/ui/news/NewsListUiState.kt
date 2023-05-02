@@ -5,19 +5,21 @@ import com.example.news.Result
 import com.example.news.domain.News
 import com.example.news.network.InternetMissingException
 import com.example.news.succeeded
-import com.example.news.viewmodels.NewsListScreenStatus
+import com.example.news.viewmodels.NewsListResultState
 
 
-data class NewsListUiState(private val newsList: Result<List<News>>) {
-    val state: NewsListScreenStatus
-    val informationMessage: Int?
-    val newsWithCompleteInformationList: List<News>
+class NewsListUiState(private val newsList: Result<List<News>>) {
+    var resultState: NewsListResultState
+    var newsWithCompleteInformationList: List<News>
 
     init {
         newsWithCompleteInformationList = getNewsWithCompleteInformation()
-        state = getStatus()
-        informationMessage = getUserInformationMessage()
+        resultState = getStatus()
     }
+
+    fun isLoading() =
+        resultState == NewsListResultState.UPDATING || resultState == NewsListResultState.SEARCHING
+
 
     fun getNewsWithCompleteInformation(): List<News> {
         return if (newsList.succeeded) {
@@ -29,39 +31,41 @@ data class NewsListUiState(private val newsList: Result<List<News>>) {
         }
     }
 
-    private fun getUserInformationMessage(): Int? {
-        return when (state) {
-            NewsListScreenStatus.LOADING -> R.string.getting_news
-            NewsListScreenStatus.CONNECTION_PROBLEM -> R.string.internet_connection_not_available
-            NewsListScreenStatus.EMPTY_LIST -> R.string.empty_news_list_text
-            NewsListScreenStatus.ERROR -> R.string.an_error_occurred_when_trying_to_get_data
-            NewsListScreenStatus.SUCCESS -> null
-
+    fun getUserInformationMessage(): Int? {
+        return when (resultState) {
+            NewsListResultState.SEARCHING -> R.string.getting_news
+            NewsListResultState.CONNECTION_PROBLEM -> R.string.internet_connection_not_available
+            NewsListResultState.EMPTY_LIST -> R.string.empty_news_list_text
+            NewsListResultState.ERROR -> R.string.an_error_occurred_when_trying_to_get_data
+            NewsListResultState.SUCCESS, NewsListResultState.UPDATING -> null
         }
     }
 
 
-    private fun getStatus(): NewsListScreenStatus {
+    private fun getStatus(): NewsListResultState {
         return when (newsList) {
-            is Result.Loading -> NewsListScreenStatus.LOADING
+            is Result.Searching -> NewsListResultState.SEARCHING
             is Result.Error -> getErrorUserStatus()
             is Result.Success -> return if (newsWithCompleteInformationList.isNullOrEmpty()) {
-                NewsListScreenStatus.EMPTY_LIST
+                NewsListResultState.EMPTY_LIST
             } else {
-                NewsListScreenStatus.SUCCESS
+                NewsListResultState.SUCCESS
             }
+
         }
     }
 
 
-    private fun getErrorUserStatus(): NewsListScreenStatus {
+    private fun getErrorUserStatus(): NewsListResultState {
         val exception = (newsList as Result.Error).exception
 
         return when (exception) {
-            is InternetMissingException -> NewsListScreenStatus.CONNECTION_PROBLEM
-            else -> NewsListScreenStatus.ERROR
+            is InternetMissingException -> NewsListResultState.CONNECTION_PROBLEM
+            else -> NewsListResultState.ERROR
         }
 
     }
+
+    fun listWithNewsIsShown(): Boolean = !newsWithCompleteInformationList.isNullOrEmpty()
 
 }

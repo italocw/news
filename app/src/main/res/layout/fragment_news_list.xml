@@ -53,14 +53,14 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/information_message"
+            android:id="@+id/result_information_message"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/margin"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:visibility="gone"
-            app:statusInformationMessage="@{viewModel.uiState.state}" />
+            app:resultInformationMessage="@{viewModel.uiState.userInformationMessage}" />
     </FrameLayout>
 </layout>
 
