@@ -12,7 +12,7 @@ import com.example.news.network.asDatabaseModel
 
 class NewsLocalDataSource internal constructor(
     private val newsDao: NewsDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher
 ) {
 
     fun observeNewsList(): LiveData<Result<List<News>>> {

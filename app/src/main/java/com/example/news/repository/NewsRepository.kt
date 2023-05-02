@@ -1,10 +1,7 @@
 package com.example.news.repository
 
-import android.app.Application
 import androidx.lifecycle.LiveData
-import androidx.room.Room
 import com.example.news.Result
-import com.example.news.database.NewsDatabase
 import com.example.news.database.NewsLocalDataSource
 import com.example.news.domain.News
 import com.example.news.network.NewsRemoteDataSource
@@ -12,36 +9,27 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 class NewsRepository private constructor(
-    application: Application,
+    private val newsLocalDataSource: NewsLocalDataSource,
+
     private val newsRemoteDataSource: NewsRemoteDataSource
 ) {
-    private val newsLocalDataSource: NewsLocalDataSource
 
     companion object {
         @Volatile
         private var INSTANCE: NewsRepository? = null
 
         fun getRepository(
-            app: Application,
+            newsLocalDataSource: NewsLocalDataSource,
             newsRemoteDataSource: NewsRemoteDataSource
         ): NewsRepository {
             return INSTANCE ?: synchronized(this) {
-                NewsRepository(app, newsRemoteDataSource).also {
+                NewsRepository(newsLocalDataSource, newsRemoteDataSource).also {
                     INSTANCE = it
                 }
             }
         }
     }
 
-    init {
-        val database = Room.databaseBuilder(
-            application.applicationContext,
-            NewsDatabase::class.java, "news.db"
-        )
-            .build()
-
-        newsLocalDataSource = NewsLocalDataSource(database.newsDao)
-    }
 
     fun observeSavedNewsList(): LiveData<Result<List<News>>> {
         return newsLocalDataSource.observeNewsList()
@@ -68,16 +56,16 @@ class NewsRepository private constructor(
         }
     }
 
-    private suspend fun getNewsWithUrl(url: String): Result<News> {
-        return newsLocalDataSource.getNews(url)
-    }
 
-    fun observeNewsListFromWeb(): LiveData<Result<List<News>>> {
+     fun observeNewsListFromWeb():  LiveData<Result<List<News>>>  {
+
         return newsRemoteDataSource.observeNewsList()
+
     }
 
     suspend fun updateNewsListFromWeb(queryText: String) {
         newsRemoteDataSource.getNewsListFromWeb(queryText)
     }
+
 
 }
