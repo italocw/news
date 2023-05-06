@@ -12,7 +12,7 @@ News is a natively developed Android application built with Kotlin. This app uti
 -   Display news articles from various sources using the News API
 -   Search for news articles by keyword
 -   View some details of each news article, including a link to the original article
--   Swipe to refresh news articles (as done on Gmail Android app)
+-   Swipe to refresh news articles (as it can be done through the Gmail Android app)
 
 ### Coming Soon
 
@@ -27,10 +27,10 @@ This project follows a single-activity architecture, which means that all the UI
 
 
 ## Libraries
-Some of the libraries used by this app project are listed above:
+Some of the libraries used by this app project are listed below:
 
 ### Android Jetpack
-The app incorporates some of the features and libraries from the [Android Jetpack](https://developer.android.com/jetpack), such as the [Navigation Component](https://developer.android.com/guide/navigation/navigation-getting-started), [DataBinding](https://developer.android.com/topic/libraries/data-binding), and [ LiveData](https://developer.android.com/topic/libraries/architecture/livedata), to enhance the development process. It also leverages  [Jetpack Compose](https://developer.android.com/jetpack/compose) for part of its UI implementation, while the rest is written using XML files.	 [Room](https://developer.android.com/training/data-storage/room)  database-releated classes are already implemented to be used on the comming soon feature to save articles offline.
+The app incorporates some of the features and libraries from the [Android Jetpack](https://developer.android.com/jetpack), such as the [Navigation Component](https://developer.android.com/guide/navigation/navigation-getting-started), [DataBinding](https://developer.android.com/topic/libraries/data-binding), and [LiveData](https://developer.android.com/topic/libraries/architecture/livedata), to enhance the development process. It also leverages  [Jetpack Compose](https://developer.android.com/jetpack/compose) for part of its UI implementation, while the rest is written using XML files. [Room] (https://developer.android.com/training/data-storage/room) database-releated classes are already implemented to be used on the comming soon feature to save articles offline.
 
 ### Other libraries
 -   [Koin](https://insert-koin.io/) for dependency injection.
