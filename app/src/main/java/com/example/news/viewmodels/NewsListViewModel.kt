@@ -21,10 +21,8 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
     val navigateToNews
         get() = _navigateToNews
 
-
     private val _uiState = MutableStateFlow(NewsListUiState(Result.Searching))
     val uiState: StateFlow<NewsListUiState> = _uiState
-
 
     private val _queryText = MutableLiveData<String>()
     val queryText

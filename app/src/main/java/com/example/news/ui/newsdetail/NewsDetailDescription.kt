@@ -21,7 +21,10 @@ import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
 import com.example.news.R
 import com.example.news.domain.News
+import com.example.news.toProperlyEncoding
 import com.google.accompanist.themeadapter.material.MdcTheme
+import okio.ByteString.Companion.encode
+import java.nio.charset.Charset
 
 @Composable
 fun NewsDetailDescription(news: News) {
@@ -37,7 +40,7 @@ fun NewsDetailContent(news: News) {
                 NewsTitle(title!!)
                 NewsContentText(content!!)
                 NewsAuthor(author!!)
-                NewsSourceName(sourceName)
+                NewsUrl(url)
             }
         }
     }
@@ -80,12 +83,13 @@ private fun NewsTitlePreview() {
 @Composable
 private fun NewsContentText(textContent: String) {
 
+
     val treatedContentText = remember(textContent) {
         if (textContent.length >= 200) {
             "${textContent.subSequence(0, 199)}..."
         } else {
             textContent
-        }
+        }.toProperlyEncoding()
     }
 
     AndroidView(
@@ -102,6 +106,8 @@ private fun NewsContentText(textContent: String) {
             .padding(top = dimensionResource(R.dimen.half_margin))
     )
 }
+
+
 
 
 @Preview
@@ -133,7 +139,7 @@ private fun NewsAuthorPreview() {
 }
 
 @Composable
-private fun NewsSourceName(sourceName: String) {
+private fun NewsUrl(sourceName: String) {
     Text(
         text = sourceName,
         style = MaterialTheme.typography.subtitle2,
@@ -148,9 +154,9 @@ private fun NewsSourceName(sourceName: String) {
 
 @Preview
 @Composable
-private fun NewsSourceNamePreview() {
+private fun NewsUrlPreview() {
     MdcTheme {
-        NewsSourceName("www.noticas.com.br")
+        NewsUrl("http://www.noticas.com.br")
     }
 }
 

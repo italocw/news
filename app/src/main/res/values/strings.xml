@@ -8,4 +8,5 @@
     <string name="an_error_occurred_when_trying_to_get_data">Um erro ocorreu ao tentar carregar os dados</string>
     <string name="search">Pesquisar</string>
     <string name="content_description_media">Imagem relacionada à notícia</string>
+    <string name="font">Fonte\n</string>
 </resources>
