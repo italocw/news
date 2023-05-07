@@ -22,6 +22,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.news.R
 import com.example.news.databinding.FragmentNewsListBinding
 import com.example.news.viewmodels.NewsListViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
@@ -56,7 +57,7 @@ class NewsListFragment : Fragment() {
     private fun setScreenState() {
         viewLifecycleOwner.lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                newsListViewModel.uiState.collect {
+                newsListViewModel.uiState.collectLatest {
                     screenState = it
                     setScreenContentByState()
                 }
