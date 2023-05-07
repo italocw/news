@@ -39,6 +39,7 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
             _uiState.value = NewsListUiState(result)
         }
     }
+
     private fun updateScreenWithDefaultSearch() {
         _uiState.value.dataState = NewsListDataState.SEARCHING
         viewModelScope.launch {
@@ -56,11 +57,9 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
     }
 
     private fun getTreatedTextQuery(): String {
-        _queryText.value.let {
-            return if (it.isNullOrBlank())
-                DEFAULT_QUERY_TEXT
-            else it
-        }
+        return _queryText.value.takeIf {
+            !it.isNullOrBlank()
+        } ?: DEFAULT_QUERY_TEXT
     }
 
     fun onNewsClicked(news: News) {
