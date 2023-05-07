@@ -47,5 +47,5 @@ The app incorporates some of the features and libraries from the [Android Jetpac
 3.  Import it on Android Studio
 4.  Add your own Google News API key to the local.properties file:
     `api_key=YOUR_API_KEY_HERE`.
-    Make sure to replace `YOUR_API_KEY_HERE` with your own API key. 
+    Make sure to replace `YOUR_API_KEY_HERE` with your own API key. You can get it after create an account on https://newsapi.org/. 
 5. Build and run the app.
