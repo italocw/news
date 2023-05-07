@@ -57,12 +57,10 @@ class NewsRepository private constructor(
     }
 
 
-    suspend fun updateNewsListFromWeb(queryText: String){
-        newsRemoteDataSource.getNewsListFromWeb(queryText)
-    }
-     fun getLastResult(): Result<List<News>>{
-        return newsRemoteDataSource.data
-    }
+    suspend fun getNewsFromWebByQuery(queryText: String) :Result<List<News>> =newsRemoteDataSource.getNewsByQuery(queryText)
+
+     suspend fun refreshCurrentSearchFromWeb()= newsRemoteDataSource.refreshCurrentSearch()
+
 
 
 }

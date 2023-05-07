@@ -29,14 +29,29 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
         get() = _queryText
 
     init {
-        _uiState.value.dataState = NewsListDataState.SEARCHING
-        updateScreen()
+        updateScreenWithDefaultSearch()
     }
 
-    private fun updateScreen() {
+    private fun updateScreenWithNewSearch() {
+        _uiState.value.dataState = NewsListDataState.SEARCHING
         viewModelScope.launch {
-            newsRepository.updateNewsListFromWeb(getTreatedTextQuery())
-            _uiState.value = NewsListUiState(newsRepository.getLastResult())
+            val result = newsRepository.getNewsFromWebByQuery(getTreatedTextQuery())
+            _uiState.value = NewsListUiState(result)
+        }
+    }
+    private fun updateScreenWithDefaultSearch() {
+        _uiState.value.dataState = NewsListDataState.SEARCHING
+        viewModelScope.launch {
+            val result = newsRepository.getNewsFromWebByQuery(DEFAULT_QUERY_TEXT)
+            _uiState.value = NewsListUiState(result)
+        }
+    }
+
+    private fun refreshSearchOnScreen() {
+        _uiState.value.dataState = NewsListDataState.REFRESHING
+        viewModelScope.launch {
+            val result = newsRepository.refreshCurrentSearchFromWeb()
+            _uiState.value = NewsListUiState(result)
         }
     }
 
@@ -54,7 +69,7 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
 
     fun onNewsTextQuerySubmit() {
         _uiState.value.dataState = NewsListDataState.SEARCHING
-        updateScreen()
+        updateScreenWithNewSearch()
     }
 
     fun onNewsNavigated() {
@@ -63,8 +78,12 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
 
     fun refreshNews() {
         if (!_uiState.value.isLoading()) {
-            _uiState.value.dataState = NewsListDataState.UPDATING
-            updateScreen()
+            refreshSearchOnScreen()
         }
+    }
+
+    fun updateWithDefaultSearch() {
+
+        updateScreenWithDefaultSearch()
     }
 }

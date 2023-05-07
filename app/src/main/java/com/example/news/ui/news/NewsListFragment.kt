@@ -47,6 +47,7 @@ class NewsListFragment : Fragment() {
         setNewsList()
         setMenu()
 
+        viewBinding.seeAllNewsButton.setOnClickListener { newsListViewModel.updateWithDefaultSearch() }
         viewBinding.swipeRefresh.setOnRefreshListener { refresh() }
     }
 
@@ -75,10 +76,10 @@ class NewsListFragment : Fragment() {
 
     private fun setScreenAsLoadingData() {
         viewBinding.apply {
-
+            seeAllNewsButton.visibility = GONE
             if (screenState.listWithNewsIsShown()) {
                 swipeRefresh.isRefreshing = true
-
+             
             } else {
                 swipeRefresh.isEnabled = false
                 progressBar.visibility = VISIBLE
@@ -94,16 +95,18 @@ class NewsListFragment : Fragment() {
             newsRecycler.visibility = VISIBLE
             progressBar.visibility = GONE
             statusText.visibility = GONE
+            seeAllNewsButton.visibility = GONE
+
         }
     }
 
     private fun setScreenAsLoadedWithoutNews() {
         viewBinding.apply {
-            letSwipeRefreshAvailable()
 
             progressBar.visibility = GONE
             newsRecycler.visibility = GONE
             statusText.visibility = VISIBLE
+            seeAllNewsButton.visibility = VISIBLE
         }
     }
 

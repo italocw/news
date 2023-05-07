@@ -6,28 +6,34 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class NewsRemoteDataSource(private val newsService: GoogleNewsApiService) {
-    lateinit var data: Result<List<News>>
-    suspend fun getNewsListFromWeb(queryText: String) {
-        withContext(Dispatchers.IO) {
+    lateinit var lastSearchQuery: String
+    suspend fun getNewsByQuery(queryText: String): Result<List<News>> {
+        lastSearchQuery = queryText
+        return getNewsFromSearch(queryText)
+    }
+
+    suspend fun refreshCurrentSearch(): Result<List<News>> {
+        return getNewsFromSearch(lastSearchQuery)
+    }
+
+    private suspend fun getNewsFromSearch(queryText: String): Result<List<News>> {
+       return withContext(Dispatchers.IO) {
             if (isInternetAvailable()) {
                 val newsListContainer = newsService.getEverythingNews(queryText)
 
                 newsListContainer.let {
-                    data = if (it.isSuccessful) {
-                        val result = Result.Success(it.body()!!.asDomainModel())
-                        result
-
+                    if (it.isSuccessful) {
+                        Result.Success(it.body()!!.asDomainModel())
                     } else {
                         Result.Error(Exception(it.errorBody().toString()))
                     }
                 }
             } else {
-                data = Result.Error(InternetMissingException())
+                Result.Error(InternetMissingException())
             }
         }
     }
-
-
 }
+
 
 class InternetMissingException : Exception()

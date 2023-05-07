@@ -7,10 +7,11 @@ import com.example.news.network.InternetMissingException
 import com.example.news.succeeded
 
 enum class NewsListDataState {
-    UPDATING, POPULATED, CONNECTION_PROBLEM, EMPTY_LIST, ERROR, SEARCHING
+    REFRESHING, POPULATED, CONNECTION_PROBLEM, EMPTY_LIST, ERROR, SEARCHING
 }
 
-class NewsListUiState(private val newsList: Result<List<News>>) {
+class NewsListUiState(private val newsList: Result<List<News>>, ) {
+
     var dataState: NewsListDataState
     var newsWithCompleteInformationList: List<News>
 
@@ -20,7 +21,7 @@ class NewsListUiState(private val newsList: Result<List<News>>) {
     }
 
     fun isLoading() =
-        dataState == NewsListDataState.UPDATING || dataState == NewsListDataState.SEARCHING
+        dataState == NewsListDataState.REFRESHING || dataState == NewsListDataState.SEARCHING
 
 
    private fun getNewsWithCompleteInformation(): List<News> {
@@ -39,7 +40,7 @@ class NewsListUiState(private val newsList: Result<List<News>>) {
             NewsListDataState.CONNECTION_PROBLEM -> R.string.internet_connection_not_available
             NewsListDataState.EMPTY_LIST -> R.string.empty_news_list_text
             NewsListDataState.ERROR -> R.string.an_error_occurred_when_trying_to_get_data
-            NewsListDataState.POPULATED, NewsListDataState.UPDATING -> null
+            NewsListDataState.POPULATED, NewsListDataState.REFRESHING -> null
         }
     }
 

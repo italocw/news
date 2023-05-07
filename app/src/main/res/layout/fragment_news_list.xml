@@ -46,12 +46,21 @@
                 android:id="@+id/status_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/progress_bar"
                 android:layout_centerInParent="true"
                 android:gravity="center"
-                android:layout_below="@id/progress_bar"
                 android:padding="@dimen/margin"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 app:statusMessage="@{viewModel.uiState.informationMessage}" />
+
+            <Button
+                android:id="@+id/see_all_news_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin"
+                android:layout_below="@id/status_text"
+                android:layout_centerInParent="true"
+                android:text="@string/see_all_news" />
         </RelativeLayout>
 
     </FrameLayout>
