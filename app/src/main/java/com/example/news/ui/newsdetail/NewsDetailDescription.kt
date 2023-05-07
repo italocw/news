@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -23,18 +25,24 @@ import com.example.news.R
 import com.example.news.domain.News
 import com.example.news.toProperlyEncoding
 import com.google.accompanist.themeadapter.material.MdcTheme
-import okio.ByteString.Companion.encode
-import java.nio.charset.Charset
 
 @Composable
 fun NewsDetailDescription(news: News) {
-    NewsDetailContent(news)
+    MdcTheme() {
+        NewsDetailContent(news)
+    }
 }
 
 @Composable
 fun NewsDetailContent(news: News) {
+
     Surface {
-        Column(Modifier.fillMaxHeight()) {
+        Column(
+            Modifier
+                .fillMaxHeight()
+                .verticalScroll((rememberScrollState()))
+                .padding(dimensionResource(id = R.dimen.margin))
+        ) {
             news.apply {
                 NewsImage(urlToImage!!)
                 NewsTitle(title!!)
@@ -106,8 +114,6 @@ private fun NewsContentText(textContent: String) {
             .padding(top = dimensionResource(R.dimen.half_margin))
     )
 }
-
-
 
 
 @Preview

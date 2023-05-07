@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.news.databinding.FragmentNewsDetailBinding
 import com.example.news.ui.newsdetail.NewsDetailFragmentArgs.fromBundle
-import com.google.accompanist.themeadapter.material.MdcTheme
 
 
 class NewsDetailFragment : Fragment() {
@@ -21,9 +20,8 @@ class NewsDetailFragment : Fragment() {
 
             newsDetailComposeView.apply {
                 setContent {
-                    MdcTheme() {
-                        NewsDetailDescription(fromBundle(requireArguments()).selectedNews)
-                    }
+                    NewsDetailDescription(fromBundle(requireArguments()).selectedNews)
+                    
                 }
             }
         }

@@ -81,8 +81,11 @@ class NewsListViewModel(private val newsRepository: NewsRepository) : ViewModel(
         }
     }
 
-    fun updateWithDefaultSearch() {
-
-        updateScreenWithDefaultSearch()
+    fun buttonWasClicked() {
+        if (uiState.value.dataState == NewsListDataState.CONNECTION_PROBLEM) {
+            updateScreenWithNewSearch()
+        } else {
+            updateScreenWithDefaultSearch()
+        }
     }
 }

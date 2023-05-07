@@ -47,7 +47,7 @@ class NewsListFragment : Fragment() {
         setNewsList()
         setMenu()
 
-        viewBinding.seeAllNewsButton.setOnClickListener { newsListViewModel.updateWithDefaultSearch() }
+        viewBinding.seeAllNewsButton.setOnClickListener { newsListViewModel.buttonWasClicked() }
         viewBinding.swipeRefresh.setOnRefreshListener { refresh() }
     }
 
@@ -60,10 +60,16 @@ class NewsListFragment : Fragment() {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 newsListViewModel.uiState.collectLatest {
                     screenState = it
+                    submitListToAdapter()
+
                     setScreenContentByState()
                 }
             }
         }
+    }
+
+    private fun submitListToAdapter() {
+        (viewBinding.newsRecycler.adapter as NewsAdapter).submitList(screenState.newsWithCompleteInformationList)
     }
 
     private fun setScreenContentByState() {
@@ -79,7 +85,7 @@ class NewsListFragment : Fragment() {
             seeAllNewsButton.visibility = GONE
             if (screenState.listWithNewsIsShown()) {
                 swipeRefresh.isRefreshing = true
-             
+
             } else {
                 swipeRefresh.isEnabled = false
                 progressBar.visibility = VISIBLE
@@ -89,20 +95,18 @@ class NewsListFragment : Fragment() {
 
     private fun setScreenAsUpdatedWithNews() {
         viewBinding.apply {
-            (newsRecycler.adapter as NewsAdapter).submitList(screenState.newsWithCompleteInformationList)
-
             letSwipeRefreshAvailable()
             newsRecycler.visibility = VISIBLE
             progressBar.visibility = GONE
             statusText.visibility = GONE
             seeAllNewsButton.visibility = GONE
-
         }
     }
 
     private fun setScreenAsLoadedWithoutNews() {
         viewBinding.apply {
-
+            swipeRefresh.isRefreshing = false
+            swipeRefresh.isEnabled = false
             progressBar.visibility = GONE
             newsRecycler.visibility = GONE
             statusText.visibility = VISIBLE

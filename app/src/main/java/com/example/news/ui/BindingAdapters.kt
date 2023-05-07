@@ -7,6 +7,7 @@ import coil.load
 
 import com.example.news.R
 import com.example.news.domain.News
+import com.example.news.ui.news.NewsListDataState
 
 @BindingAdapter("image")
 fun ImageView.setImage(news: News?) {
@@ -20,10 +21,19 @@ fun ImageView.setImage(news: News?) {
 }
 
 @BindingAdapter("statusMessage")
-fun TextView.seStatusMessage(statusMessage: Int?) {
+fun TextView.setStatusMessage(statusMessage: Int?) {
     if (statusMessage != null) {
-            text=  context.getText(statusMessage)
-        }
+        text = context.getText(statusMessage)
+    }
 
+}
+
+@BindingAdapter("buttonMessage")
+fun TextView.setButtonMessage(screenStatus: NewsListDataState) {
+    if (screenStatus == NewsListDataState.CONNECTION_PROBLEM) {
+        text = context.getText(R.string.reload)
+    } else {
+        text = context.getText(R.string.see_all_news)
+    }
 }
 

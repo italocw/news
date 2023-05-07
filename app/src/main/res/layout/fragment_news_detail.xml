@@ -7,16 +7,10 @@
             type="com.example.news.domain.News" />
     </data>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/margin">
-
         <androidx.compose.ui.platform.ComposeView
             android:id="@+id/news_detail_compose_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-    </ScrollView>
 
 </layout>
