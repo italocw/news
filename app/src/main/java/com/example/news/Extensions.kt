@@ -4,11 +4,17 @@ import okio.ByteString.Companion.encode
 import java.nio.charset.Charset
 
 fun String.toProperlyEncoding(): String {
-    val charset = Charsets.ISO_8859_1
-    val textNeedsToBeEncoded =
-        Charset.forName(charset.name()).newEncoder().canEncode(this)
-    return if (textNeedsToBeEncoded) {
-        encode(charset).utf8()
-    } else
+    val textCanBeEncondedToISO_8859_1 =
+        Charset.forName(Charsets.ISO_8859_1.name()).newEncoder().canEncode(this)
+
+    return if (textCanBeEncondedToISO_8859_1) {
+       val textFromISO = encode(Charsets.ISO_8859_1).utf8()
+            if (textFromISO.length < this.length) {
+                textFromISO
+            } else {
+                this
+        }
+    } else {
         this
+    }
 }
