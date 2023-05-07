@@ -15,7 +15,7 @@ News is a natively developed Android application built with Kotlin. This app uti
 
 ### Coming Soon
 
-#### Save Favorite News Articles
+#### Save Selected News Articles
 
 The Room database implementation is already functional and will be used to implement a feature that allows users to save news articles for offline access.
 
