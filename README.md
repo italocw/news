@@ -12,7 +12,6 @@ News is a natively developed Android application built with Kotlin. This app uti
 -   Display news articles from various sources using the News API
 -   Search for news articles by keyword
 -   View some details of each news article, including a link to the original article
--   Swipe to refresh news articles (as it can be done through the Gmail Android app)
 
 ### Coming Soon
 
