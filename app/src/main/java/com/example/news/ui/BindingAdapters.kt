@@ -19,10 +19,10 @@ fun ImageView.setImage(news: News?) {
     }
 }
 
-@BindingAdapter("resultInformationMessage")
-fun TextView.setResultInformationMessage(informationTextResource: Int?) {
-    if (informationTextResource != null) {
-            text=  context.getText(informationTextResource)
+@BindingAdapter("statusMessage")
+fun TextView.seStatusMessage(statusMessage: Int?) {
+    if (statusMessage != null) {
+            text=  context.getText(statusMessage)
         }
 
 }

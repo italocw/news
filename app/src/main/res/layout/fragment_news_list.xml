@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="menuSearch"
             type="android.widget.SearchView" />
@@ -29,38 +30,30 @@
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <LinearLayout
-            android:id="@+id/loading_data_layout"
+        <RelativeLayout
+
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:layout_gravity="center">
 
             <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/loading_state_text"
+                android:id="@+id/progress_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin"
-                android:text="@string/getting_news"
-                android:gravity="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-             />
-        </LinearLayout>
+                android:layout_centerInParent="true" />
 
-        <TextView
-            android:id="@+id/result_information_message"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/margin"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:visibility="gone"
-            app:resultInformationMessage="@{viewModel.uiState.userInformationMessage}" />
+            <TextView
+                android:id="@+id/status_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:layout_below="@id/progress_bar"
+                android:padding="@dimen/margin"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                app:statusMessage="@{viewModel.uiState.informationMessage}" />
+        </RelativeLayout>
+
     </FrameLayout>
 </layout>
 

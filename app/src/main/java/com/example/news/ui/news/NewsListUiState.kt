@@ -33,7 +33,7 @@ class NewsListUiState(private val newsList: Result<List<News>>) {
         }
     }
 
-    fun getUserInformationMessage(): Int? {
+    fun getInformationMessage(): Int? {
         return when (dataState) {
             NewsListDataState.SEARCHING -> R.string.getting_news
             NewsListDataState.CONNECTION_PROBLEM -> R.string.internet_connection_not_available

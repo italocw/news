@@ -74,14 +74,13 @@ class NewsListFragment : Fragment() {
 
     private fun setScreenAsLoadingData() {
         viewBinding.apply {
-            resultInformationMessage.visibility = GONE
 
             if (screenState.listWithNewsIsShown()) {
                 swipeRefresh.isRefreshing = true
 
             } else {
                 swipeRefresh.isEnabled = false
-                loadingDataLayout.visibility = VISIBLE
+                progressBar.visibility = VISIBLE
             }
         }
     }
@@ -92,8 +91,8 @@ class NewsListFragment : Fragment() {
 
             letSwipeRefreshAvailable()
             newsRecycler.visibility = VISIBLE
-            loadingDataLayout.visibility = GONE
-            resultInformationMessage.visibility = GONE
+            progressBar.visibility = GONE
+            statusText.visibility = GONE
         }
     }
 
@@ -101,9 +100,9 @@ class NewsListFragment : Fragment() {
         viewBinding.apply {
             letSwipeRefreshAvailable()
 
-            loadingDataLayout.visibility = GONE
+            progressBar.visibility = GONE
             newsRecycler.visibility = GONE
-            resultInformationMessage.visibility = VISIBLE
+            statusText.visibility = VISIBLE
         }
     }
 
