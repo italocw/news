@@ -12,11 +12,10 @@ News is a natively developed Android application built with Kotlin. This app uti
 -   Display news articles from various sources using the News API
 -   Search for news articles by keyword
 -   View some details of each news article, including a link to the original article
--   Swipe to refresh news articles (as it can be done through the Gmail Android app)
 
 ### Coming Soon
 
-#### Save Favorite News Articles
+#### Save Selected News Articles
 
 The Room database implementation is already functional and will be used to implement a feature that allows users to save news articles for offline access.
 
@@ -35,7 +34,7 @@ The app incorporates some of the features and libraries from the [Android Jetpac
 ### Other libraries
 -   [Koin](https://insert-koin.io/) for dependency injection.
 -   [Retrofit](https://square.github.io/retrofit/) for making HTTP requests to the news API.
--   [Coil](https://coil-kt.github.io/coil/) for image loading and caching.
+-   [Coil](https://coil-kt.github.io/coil/) for image loading.
 
 ## Screenshots
 ![Screenshots](https://user-images.githubusercontent.com/20100533/236609050-cb67c42e-e047-428d-8113-3d48a90c9213.png)
@@ -47,5 +46,5 @@ The app incorporates some of the features and libraries from the [Android Jetpac
 3.  Import it on Android Studio
 4.  Add your own Google News API key to the local.properties file:
     `api_key=YOUR_API_KEY_HERE`.
-    Make sure to replace `YOUR_API_KEY_HERE` with your own API key. 
+    Make sure to replace `YOUR_API_KEY_HERE` with your own API key. You can get it after create an account on https://newsapi.org/. 
 5. Build and run the app.
