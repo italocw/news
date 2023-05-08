@@ -34,7 +34,7 @@ The app incorporates some of the features and libraries from the [Android Jetpac
 ### Other libraries
 -   [Koin](https://insert-koin.io/) for dependency injection.
 -   [Retrofit](https://square.github.io/retrofit/) for making HTTP requests to the news API.
--   [Coil](https://coil-kt.github.io/coil/) for image loading and caching.
+-   [Coil](https://coil-kt.github.io/coil/) for image loading.
 
 ## Screenshots
 ![Screenshots](https://user-images.githubusercontent.com/20100533/236609050-cb67c42e-e047-428d-8113-3d48a90c9213.png)
