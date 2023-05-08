@@ -1,5 +1,6 @@
 package com.example.news.database
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
@@ -33,6 +34,22 @@ interface NewsDao {
 @Database(entities = [DatabaseNews::class], version = 1, exportSchema = false)
 abstract class NewsDatabase: RoomDatabase() {
     abstract val newsDao: NewsDao
+
+    companion object {
+        @Volatile
+        private var INSTANCE: NewsDatabase? = null
+        fun getInstance(context: Context): NewsDatabase {
+            synchronized(this) {
+                return INSTANCE ?: Room.databaseBuilder(
+                    context,
+                    NewsDatabase::class.java, "news.db"
+                ).build().also {
+                    INSTANCE = it
+                }
+
+            }
+        }
+    }
 }
 
 
