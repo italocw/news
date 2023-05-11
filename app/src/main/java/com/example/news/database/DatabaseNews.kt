@@ -3,6 +3,7 @@ package com.example.news.database
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.news.domain.News
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -15,7 +16,7 @@ data class DatabaseNews constructor(
     val description: String,
     val sourceName: String,
     val author: String,
-    val publishedAt: String,
+    val publishedAt: Long,
     val content: String
 ) {
     fun asDomainModel() = News(
@@ -25,10 +26,7 @@ data class DatabaseNews constructor(
         description,
         sourceName,
         author,
-        LocalDateTime.parse(
-            publishedAt,
-            DateTimeFormatter.ISO_OFFSET_DATE_TIME
-        ),
+        Instant.ofEpochMilli(publishedAt),
         content
     )
 }
@@ -42,10 +40,7 @@ fun List<DatabaseNews>.asDomainModel(): List<News> {
             it.description,
             it.sourceName,
             it.author,
-            LocalDateTime.parse(
-                it.publishedAt,
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME
-            ),
+            Instant.ofEpochMilli(it.publishedAt),
             it.content
         )
     }

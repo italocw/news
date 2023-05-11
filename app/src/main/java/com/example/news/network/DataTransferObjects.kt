@@ -4,6 +4,7 @@ import com.example.news.database.DatabaseNews
 import com.example.news.domain.News
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 
@@ -41,7 +42,7 @@ fun NetworkNewsContainer.asDomainModel(): List<News> {
             LocalDateTime.parse(
                 it.publishedAt,
                 DateTimeFormatter.ISO_OFFSET_DATE_TIME
-            ),
+            ).toInstant(ZoneOffset.UTC),
             it.content
         )
     }
@@ -54,6 +55,6 @@ fun News.asDatabaseModel() = DatabaseNews(
     description ?: "",
     sourceName,
     author ?: "",
-    publishedAt.toString(),
+    publishedAt.toEpochMilli(),
     content ?: ""
 )
